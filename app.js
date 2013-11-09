@@ -111,6 +111,11 @@ var getGame = function() {
         size: nr,
         score: 0
       }
+    },
+    ball: {
+      x: 1,
+      y: 2,
+      velocity: 3
     }
   };
   tallies.left.vals = [];
