@@ -96,13 +96,22 @@ var gameStateTransform = {
   }
 };
 
+var sendGame = function(ws, interval) {
+  interval = interval || 100;
+  var intervalId = setInterval(function() {
+    console.log('sending game')
+    ws.send(JSON.stringify(getGame(interval)));  
+  }, interval);
+  ws.on('close', function() {
+    clearInterval(intervalId);
+  });
+};
+
 var getGame = function(interval) {
   var nlx = gameStateTransform.left.vals.length;
   var nrx = gameStateTransform.right.vals.length;
   var nl = socketClients.controllers.leftPaddle.length;
   var nr = socketClients.controllers.rightPaddle.length;
-
-  
 
   if (nlx > 0 && nl > 0) {
     gameStateTransform.left.lastVal = gameStateTransform.left.vals.reduce(function(previousValue, currentValue){
@@ -141,17 +150,20 @@ var getGame = function(interval) {
   return game;
 };
 wss.on('connection', function(ws) {
+  var clientBroadcastInterval;
   console.log('connection made!')
   ws.on('message', function(data){
     data = JSON.parse(data);
     console.log('received coords: %s', data);
     switch(data.messageType) {
+
     case "coords":
       if (data.paddle==='left') {
         gameStateTransform.left.vals.push((90 - data.position.x)/90);
       } else if (data.paddle==='right') {
         gameStateTransform.right.vals.push((90 - data.position.x)/90);
       }
+
     case "register":
       if (data.clientType==='controller') {
         if (socketClients.controllers.leftPaddle.length > socketClients.controllers.rightPaddle.length) { 
@@ -164,16 +176,11 @@ wss.on('connection', function(ws) {
       } else if (data.clientType==='board') {
       }
     }
-
-    var broadcast = function() {
-      var interval = 10;
-      ws.send(JSON.stringify(getGame(interval)));
-      setTimeout(broadcast, interval);
-    };
-    broadcast();
+    sendGame(ws, 10);
   });
 
   ws.on('close', function() {
+    clearInterval(clientBroadcastInterval)
     console.log('stopping client interval');
   });
 });
