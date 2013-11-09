@@ -10,8 +10,6 @@ var express = require('express'),
   path = require('path'),
   WebSocketServer = require('ws').Server;
 
-
-
 var app = module.exports = express();
 var server = http.createServer(app);
 var wss = new WebSocketServer({server: server});
@@ -60,15 +58,104 @@ app.get('*', routes.index);
 /**
  * WebSockets!
  */
+var socketClients = {
+  controllers: {
+    leftPaddle: [],
+    rightPaddle: []
+  },
+  boards: []
+};
+var tallies = {
+  left: {
+    lastVal: .5,
+    vals: []
+  },
+  right: {
+    lastVal: .5,
+    vals: []
+  }
+};
+
+var getGame = function() {
+  var nlx = tallies.left.vals.length;
+  var nrx = tallies.right.vals.length;
+  var nl = socketClients.controllers.leftPaddle.length;
+  var nr = socketClients.controllers.rightPaddle.length;
+
+  if (nlx > 0 && nl > 0) {
+    tallies.left.lastVal = tallies.left.vals.reduce(function(previousValue, currentValue){
+      return previousValue + currentValue;
+    }, 0) / nlx;
+  } else if (nrx > 0 && nr > 0) {
+    tallies.right.lastVal = tallies.right.vals.reduce(function(previousValue, currentValue){
+      return previousValue + currentValue;
+    }, 0) / nrx;
+  }
+
+  var game = {
+    messageType: 'board',
+    paddles: {
+      left: {
+        x: tallies.left.lastVal
+      },
+      right: {
+        x: tallies.right.lastVal
+      }
+    },
+    team: {
+      left: {
+        size: nl,
+        score: 0
+      },
+      right: {
+        size: nr,
+        score: 0
+      }
+    }
+  };
+  tallies.left.vals = [];
+  tallies.right.vals = [];
+  return game;
+};
 wss.on('connection', function(ws) {
   console.log('connection made!')
-  ws.on('message', function(message){
-    console.log('received: %s', message);
+  var clientType;
+  ws.on('message', function(data){
+    data = JSON.parse(data);
+    console.log('received coords: %s', data);
+    switch(data.messageType) {
+    case "coords":
+      if (data.paddle==='left') {
+        tallies.left.vals.push((90 - data.position.x)/90);
+      } else if (data.paddle==='right') {
+        tallies.right.vals.push((90 - data.position.x)/90);
+      }
+    case "register":
+      if (data.clientType==='controller') {
+        if (socketClients.controllers.leftPaddle.length > socketClients.controllers.rightPaddle.length) { 
+          socketClients.controllers.rightPaddle.push(data.clientId);
+          ws.send(JSON.stringify({messageType: "paddle", paddle: "right"}));
+        } else {
+          socketClients.controllers.leftPaddle.push(data.clientId);
+          ws.send(JSON.stringify({messageType: "paddle", paddle: "left"}));
+        }
+      } else if (data.clientType==='board') {
+
+      }
+    }
+
+    var broadcast = function() {
+      ws.send(JSON.stringify(getGame()));
+      setTimeout(broadcast, 10);
+    };
+    broadcast();
   });
+
   ws.on('close', function() {
     console.log('stopping client interval');
   });
 });
+
 
 /**
  * Start Server

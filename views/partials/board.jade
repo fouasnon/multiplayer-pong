@@ -2,10 +2,10 @@
   h1 SocketBall.biz
   .board
     .ball
-    .paddle.left
-    .paddle.right
+    .paddle.left(position="leftPosition", move-paddle="true")
+    .paddle.right(position="rightPosition", move-paddle="true")
   .stats
     p Left Team:
-      span 234 users
+      span {{game.team.left.size}} users
     p Right Team:
-      span 391 users
+      span {{game.team.right.size}} users
