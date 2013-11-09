@@ -8,7 +8,7 @@ var express = require('express'),
   api = require('./routes/api'),
   http = require('http'),
   path = require('path'),
-WebSocketServer = require('ws').Server;
+  WebSocketServer = require('ws').Server;
 
 
 
@@ -61,19 +61,19 @@ app.get('*', routes.index);
  * WebSockets!
  */
 wss.on('connection', function(ws) {
-  var id = setInterval(function() {
-    ws.send(JSON.stringify(process.memoryUsage()), function() { /* ignore errors */ });
-  }, 100);
-  console.log('started client interval');
+  console.log('connection made!')
+  ws.on('message', function(message){
+    console.log('received: %s', message);
+  });
   ws.on('close', function() {
     console.log('stopping client interval');
-    clearInterval(id);
   });
 });
+
 /**
  * Start Server
  */
 
-http.createServer(app).listen(app.get('port'), function () {
+server.listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'));
 });
