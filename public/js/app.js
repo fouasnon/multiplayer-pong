@@ -21,6 +21,5 @@ angular.module('multiplayerPong', [
       otherwise({
         redirectTo: '/'
       });
-    
     $locationProvider.html5Mode(true);
   });
