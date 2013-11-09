@@ -302,11 +302,18 @@ body {
 
 /* 3d Ball elements */
 
+.ball-container {
+  position:absolute;
+  top:0px;
+  bottom:0px;
+  left:48px;
+  right:48px;
+}
+
 .ball {
   display: block;
   width: 100px;
   height: 100px;
-  margin: 30px auto 0;
   background-color: #eee;
   border-radius: 50%;
   box-shadow: inset -25px -25px 40px rgba(0,0,0,.3);
@@ -315,14 +322,18 @@ body {
   background-image: -o-linear-gradient(-45deg, rgba(255,255,220,.2) 0%, transparent 100%);
   background-image: -ms-linear-gradient(-45deg, rgba(255,255,220,.2) 0%, transparent 100%);
   position:absolute;
-  top:40%;
-  left:0%;
-  -webkit-transition: all 1s linear;
+  top:0px;
+  left:0px;
+  -webkit-transition: all 2s linear;
 }
 
-.ball.hit {
-  left:100%;
+.ball.going-right {
   margin-left:-100px;
+  left:100%;
+}
+
+.ball.going-down {
+  margin-top:-100px;
 }
 
 .ball {
