@@ -4,9 +4,11 @@
       h1 SocketBall Controller
     .slider
       .gutter
-      .notch
+      .ball(position="gutterBallPosition", move-gutter-ball="true")
     .stats
       div x: {{x}}
-    .help
-      img.help-icon(src="/img/help-icon.png")
+    .help(ng-click="open=open?false:true", ng-class="{open:open}")
+      img.help-icon(src="/img/help-icon.png", ng-hide="open")
       img.help-contents(src="/img/help-graphic-3.png")
+  .goal
+    h1 GOAL!!!

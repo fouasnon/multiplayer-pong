@@ -7,7 +7,8 @@ angular.module('multiplayerPong', [
   'multiplayerPong.controllers',
   'multiplayerPong.filters',
   'multiplayerPong.services',
-  'multiplayerPong.directives'
+  'multiplayerPong.directives',
+  'ngTouch'
 ]).
   config(function ($routeProvider, $locationProvider) {
     $routeProvider.
