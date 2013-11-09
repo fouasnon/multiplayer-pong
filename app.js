@@ -65,7 +65,7 @@ var socketClients = {
   },
   boards: []
 };
-var tallies = {
+var gameStateTransform = {
   left: {
     lastVal: .5,
     vals: []
@@ -73,21 +73,43 @@ var tallies = {
   right: {
     lastVal: .5,
     vals: []
+  },
+  ball: {
+    x: {
+      position: 0,
+      velocity: 1,
+      direction: 1
+    },
+    y: {
+      position: 0,
+      velocity: -1,
+      direction: 0
+    }
+  },
+  team: {
+    left: {
+      score: 0
+    },
+    right: {
+      score: 0
+    }
   }
 };
 
-var getGame = function() {
-  var nlx = tallies.left.vals.length;
-  var nrx = tallies.right.vals.length;
+var getGame = function(interval) {
+  var nlx = gameStateTransform.left.vals.length;
+  var nrx = gameStateTransform.right.vals.length;
   var nl = socketClients.controllers.leftPaddle.length;
   var nr = socketClients.controllers.rightPaddle.length;
 
+  
+
   if (nlx > 0 && nl > 0) {
-    tallies.left.lastVal = tallies.left.vals.reduce(function(previousValue, currentValue){
+    gameStateTransform.left.lastVal = gameStateTransform.left.vals.reduce(function(previousValue, currentValue){
       return previousValue + currentValue;
     }, 0) / nlx;
   } else if (nrx > 0 && nr > 0) {
-    tallies.right.lastVal = tallies.right.vals.reduce(function(previousValue, currentValue){
+    gameStateTransform.right.lastVal = gameStateTransform.right.vals.reduce(function(previousValue, currentValue){
       return previousValue + currentValue;
     }, 0) / nrx;
   }
@@ -96,10 +118,10 @@ var getGame = function() {
     messageType: 'board',
     paddles: {
       left: {
-        x: tallies.left.lastVal
+        x: gameStateTransform.left.lastVal
       },
       right: {
-        x: tallies.right.lastVal
+        x: gameStateTransform.right.lastVal
       }
     },
     team: {
@@ -112,28 +134,23 @@ var getGame = function() {
         score: 0
       }
     },
-    ball: {
-      x: 1,
-      y: 2,
-      velocity: 3
-    }
+    ball: gameStateTransform.ball
   };
-  tallies.left.vals = [];
-  tallies.right.vals = [];
+  gameStateTransform.left.vals = [];
+  gameStateTransform.right.vals = [];
   return game;
 };
 wss.on('connection', function(ws) {
   console.log('connection made!')
-  var clientType;
   ws.on('message', function(data){
     data = JSON.parse(data);
     console.log('received coords: %s', data);
     switch(data.messageType) {
     case "coords":
       if (data.paddle==='left') {
-        tallies.left.vals.push((90 - data.position.x)/90);
+        gameStateTransform.left.vals.push((90 - data.position.x)/90);
       } else if (data.paddle==='right') {
-        tallies.right.vals.push((90 - data.position.x)/90);
+        gameStateTransform.right.vals.push((90 - data.position.x)/90);
       }
     case "register":
       if (data.clientType==='controller') {
@@ -145,13 +162,13 @@ wss.on('connection', function(ws) {
           ws.send(JSON.stringify({messageType: "paddle", paddle: "left"}));
         }
       } else if (data.clientType==='board') {
-
       }
     }
 
     var broadcast = function() {
-      ws.send(JSON.stringify(getGame()));
-      setTimeout(broadcast, 10);
+      var interval = 10;
+      ws.send(JSON.stringify(getGame(interval)));
+      setTimeout(broadcast, interval);
     };
     broadcast();
   });
