@@ -4,8 +4,8 @@
 
 angular.module('multiplayerPong.controllers', []).
   controller('MobileCtrl', function ($scope, $timeout, $window) {
+    var ws = new WebSocket('ws://www.socketball.biz');
 
-    var ws = new WebSocket('ws://socketball.biz');
     $scope.clientId = parseInt(Math.random()*1000000000);
 
     ws.onopen = function() {
@@ -58,7 +58,7 @@ angular.module('multiplayerPong.controllers', []).
     
   }).
   controller('BoardCtrl', function ($scope, $timeout) {
-    var ws = new WebSocket('ws://socketball.biz');
+    var ws = new WebSocket('ws://www.socketball.biz');
     $scope.leftPosition = 0;
     $scope.rightPosition = 0;
     $scope.clientId = parseInt(Math.random()*1000000000);

@@ -17,7 +17,7 @@ angular.module('multiplayerPong.directives', []).
       link: function(scope, elm, attrs) {
         scope.$watch('position', function(newVal){
           elm.css('top', newVal*100+'%');
-          elm.css('margin-top', -140*newVal+'px');
+          elm.css('margin-top', -160*newVal+'px');
         });
       }
     };
