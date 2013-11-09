@@ -6,14 +6,13 @@ angular.module('multiplayerPong.controllers', []).
   controller('MobileCtrl', function ($scope, $timeout, $window) {
     var ws = new WebSocket('ws://galois.local:3000');
     $scope.name = 'Mobile';
-
+    
     ws.onopen = function() {
       console.log('do i happen?');
       ws.send('hello world');
     };
     ws.onmessage = function(data, flags) {
-      // flags.binary will be set if a binary data is received
-      // flags.masked will be set if the data was masked
+      console.log(data);
     };
 
 
