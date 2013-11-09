@@ -4,7 +4,7 @@
 
 angular.module('multiplayerPong.controllers', []).
   controller('MobileCtrl', function ($scope, $timeout, $window) {
-    var ws = new WebSocket('ws://galois.local:3000');
+    var ws = new WebSocket('ws://localhost:3000');
     $scope.name = 'Mobile';
     
     ws.onopen = function() {

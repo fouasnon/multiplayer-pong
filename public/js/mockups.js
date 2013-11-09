@@ -1,32 +1,40 @@
 $(document).ready(function () {
 
-var hitLoop = function () {
+	var hitLoop = function () {
       $(".ball").toggleClass("hit");
       window.setTimeout(hitLoop, 1000);
-  };
+  	};
 
 // hitLoop();
 
 
-var goal = function () {
-  $(".goal").toggle();
-  $(".goal h1").addclass('visible');
-};
+	var goal = function () {
+	  $(".goal").toggle();
+	  $(".goal h1").addclass('visible');
+	};
 
-var goalReset = function () {
+	var goalReset = function () {
 		$(".goal").addClass("explode");
 		window.setTimeout(function(){
 			$('.goal').remove();
 		}, 300);
 	};
 
-$(document).on('click', ".goal",
+	$(document).on('click', ".goal",
 	function () {
 		$(".goal").addClass("explode");
 		window.setTimeout(function(){
 			$('.goal').remove();
 		}, 300);
 	});
+
+	//help menu
+	$(document).on('click', ".help",
+	function () {
+		$(".help").toggleClass("open");	
+		$(".help-icon").toggle();
+	});
+
 });
 
 
