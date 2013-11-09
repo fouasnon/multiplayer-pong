@@ -77,14 +77,14 @@ body {
   height:500px;
   top:100px;
   position: absolute;
-  background:rgba(0,0,0,0.2);
+  background:rgba(0,0,0,0.3);
   box-shadow:0px 10px 25px #000 inset;
 }
 
 .paddle {
-  height:140px;
-  width:18px;
-  border-radius:2px;
+  height:160px;
+  width:40px;
+  border-radius:8px;
   background-color: #eee;
   box-shadow: inset -25px -25px 40px rgba(0,0,0,.3);
   background-image: -webkit-linear-gradient(-45deg, rgba(255,255,220,.2) 0%, transparent 100%);
@@ -95,13 +95,54 @@ body {
 }
 
 .paddle.left {
-  left:18px;
+  left:8px;
   top:240px;
 }
 
 .paddle.right {
-  right:18px;
+  right:8px;
   top:200px;
+}
+
+.goal {
+  z-index: 100;
+  width:100%;
+  height:100%;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background:rgba(0,0,0,0.5);
+  -webkit-transition: 0.3s;
+  opacity:0;
+  pointer-events:none;
+}
+
+.visible {
+  opacity:1;
+  display:block;
+}
+
+.goal h1 {
+  text-align:center;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  height:100px;
+  width:100%;
+  font-size:92px;
+  -webkit-transition: 0.3s;
+  -webkit-transform: translateY(-60px);
+  opacity:0;
+}
+
+.goal.visible h1 {
+  opacity:1;
+  -webkit-transform: translateY(0px);
+}
+
+.explode {
+  -webkit-transform: scale(2) rotate(10deg)!important;
+  opacity:0!important;
 }
 
 /* Mobile Layout */
@@ -113,6 +154,7 @@ body {
   margin: 0;
   padding: 0;
   border: 0;
+
 }
 
 .mobile {
@@ -121,7 +163,7 @@ body {
   margin: auto;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
-  background:rgba(255,255,255,0.5);
+  background:rgba(255,255,255,0.75);
   border-radius:6px;
   box-shadow:0px 10px 25px #000;
 }
@@ -139,9 +181,34 @@ body {
   text-align: center;
   margin:0px;
   padding:16px 0px;
+  color:#333;
 }
 
+.slider {
+  width:100%;
+  height:100%;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background:rgba(255,255,255,0.75);
+  border-radius:6px;
+  box-shadow:0px 10px 25px #000;
+}
 
+.gutter {
+
+}
+
+.notch {
+  width:20%;
+  height:60%;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background:rgba(255,255,255,0.75);
+  top-left-border-radius:50px;
+  box-shadow:0px 10px 25px #000;
+}
 
 /* 3d Ball elements */
 
@@ -168,3 +235,10 @@ body {
   margin-left:-100px;
 }
 
+.ball {
+}
+
+.ball.explode {
+    opacity: 0;
+    -webkit-transform: scale(3) rotate(10deg);
+}
