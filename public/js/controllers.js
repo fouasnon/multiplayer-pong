@@ -13,7 +13,7 @@ angular.module('multiplayerPong.controllers', []).
     // }, 1000)
 
   }).
-  controller('MyCtrl2', function ($scope) {
-    // write Ctrl here
+  controller('BoardCtrl', function ($scope) {
+    $scope.name = 'Board';
 
   });

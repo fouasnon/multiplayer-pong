@@ -8,19 +8,19 @@ angular.module('multiplayerPong', [
   'multiplayerPong.services',
   'multiplayerPong.directives'
 ]).
-config(function ($routeProvider, $locationProvider) {
-  $routeProvider.
-    when('/', {
-      templateUrl: 'partials/partial1',
-      controller: 'MobileCtrl'
-    }).
-    when('/view2', {
-      templateUrl: 'partials/partial2',
-      controller: 'MyCtrl2'
-    }).
-    otherwise({
-      redirectTo: '/view1'
-    });
-
-  $locationProvider.html5Mode(true);
-});
+  config(function ($routeProvider, $locationProvider) {
+    $routeProvider.
+      when('/', {
+        templateUrl: 'partials/mobile',
+        controller: 'MobileCtrl'
+      }).
+      when('/board', {
+        templateUrl: 'partials/board',
+        controller: 'BoardCtrl'
+      }).
+      otherwise({
+        redirectTo: '/'
+      });
+    
+    $locationProvider.html5Mode(true);
+  });
