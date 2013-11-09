@@ -3,17 +3,45 @@
 /* Controllers */
 
 angular.module('multiplayerPong.controllers', []).
-  controller('MobileCtrl', function ($scope, $timeout, Socket) {
-    var socket = new Socket();
+  controller('MobileCtrl', function ($scope, $timeout, $window) {
+    var ws = new WebSocket('ws://galois.local:3000');
     $scope.name = 'Mobile';
-    console.log(socket);
 
-    // $timeout(function(){
-    //   socket.send('Yo Dawg!');
-    // }, 1000)
+    ws.onopen = function() {
+      console.log('do i happen?');
+      ws.send('hello world');
+    };
+    ws.onmessage = function(data, flags) {
+      // flags.binary will be set if a binary data is received
+      // flags.masked will be set if the data was masked
+    };
 
+
+    $timeout(function(){
+      ws.send('Yo Dawg!');
+    }, 1000)
+    $window.addEventListener("deviceorientation", function(event) {
+      // process event.alpha, event.beta and event.gamma
+
+      var sendCoords = function(){
+        $scope.$apply(function(){
+          $scope.x = event.beta;  // In degree in the range [-180,180]
+          $scope.y = event.gamma; // In degree in the range [-90,90]
+          $scope.z = event.alpha; // In degree in the range [-90,90]
+          ws.send($scope.x);
+        })
+        $timeout(function(){
+          sendCoords();
+        }, 1000);
+      }
+      sendCoords();
+//      console.log('x'+ x)
+//      console.log('y'+ y)
+//      console.log('z'+ z)
+
+
+    }, true);
   }).
   controller('BoardCtrl', function ($scope) {
     $scope.name = 'Board';
-
   });
