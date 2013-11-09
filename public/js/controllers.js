@@ -3,8 +3,13 @@
 /* Controllers */
 
 angular.module('multiplayerPong.controllers', []).
-  controller('MobileCtrl', function ($scope, $timeout, $window) {
-    var ws = new WebSocket('ws://www.socketball.biz');
+  controller('MobileCtrl', function ($scope, $timeout, $window, $location) {
+    var host = $location.host();
+    var port = $location.port()
+    if (port) {
+      host += ':'+ port
+    }
+    var ws = new WebSocket('ws://'+host);
 
     $scope.clientId = parseInt(Math.random()*1000000000);
 
@@ -57,8 +62,14 @@ angular.module('multiplayerPong.controllers', []).
 
     
   }).
-  controller('BoardCtrl', function ($scope, $timeout) {
-    var ws = new WebSocket('ws://www.socketball.biz');
+  controller('BoardCtrl', function ($scope, $timeout, $location) {
+    var host = $location.host();
+    var port = $location.port()
+    if (port) {
+      host += ':'+ port
+    }
+    var ws = new WebSocket('ws://'+host);
+
     $scope.leftPosition = 0;
     $scope.rightPosition = 0;
     $scope.clientId = parseInt(Math.random()*1000000000);
@@ -78,6 +89,7 @@ angular.module('multiplayerPong.controllers', []).
           $scope.leftPosition = data.paddles.left.x;
           $scope.rightPosition = data.paddles.right.x;
         });
+
       }
     };
   });
