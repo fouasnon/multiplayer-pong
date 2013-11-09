@@ -3,7 +3,8 @@
   .score.left 234
   .score.right 234
   .board
-    .ball
+    .ball-container
+      .ball
     .paddle.left(position="leftPosition", move-paddle="true")
     .paddle.right(position="rightPosition", move-paddle="true")
   .stats
@@ -13,4 +14,3 @@
       span {{game.team.right.size}} users
   .goal
     h1 GOAL!!!
-

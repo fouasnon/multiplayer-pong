@@ -1,37 +1,9 @@
 /* app css stylesheet */
 
-.menu {
-  list-style: none;
-  border-bottom: 0.1em solid black;
-  margin-bottom: 2em;
-  padding: 0 0 0.5em;
-}
-
-.menu:before {
-  content: "[";
-}
-
-.menu:after {
-  content: "]";
-}
-
-.menu > li {
-  display: inline;
-}
-
-.menu > li:before {
-  content: "|";
-  padding-right: 0.3em;
-}
-
-.menu > li:nth-child(1):before {
-  content: "";
-  padding: 0;
-}
-
 body {
   margin:0px;
   padding:0px;
+  color:#222;
   background:url('/img/binding_dark.png');
 }
 
@@ -137,7 +109,7 @@ body {
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
   background:rgba(0,0,0,0.5);
-  -webkit-transition: 0.3s;
+  -webkit-transition: 0.8s;
   opacity:0;
   pointer-events:none;
 }
@@ -154,15 +126,15 @@ body {
   top: 0; left: 0; bottom: 0; right: 0;
   height:100px;
   width:100%;
-  font-size:92px;
+  font-size:124px;
   -webkit-transition: 0.3s;
-  -webkit-transform: translateY(-60px);
+  -webkit-transform: translateY(-50px) translateZ(300px) rotate(-10deg);
   opacity:0;
 }
 
 .goal.visible h1 {
   opacity:1;
-  -webkit-transform: translateY(0px);
+  -webkit-transform: translateY(0px) translateZ(0px) rotate(0deg);
 }
 
 .explode {
@@ -302,11 +274,18 @@ body {
 
 /* 3d Ball elements */
 
+.ball-container {
+  position:absolute;
+  top:0px;
+  bottom:0px;
+  left:48px;
+  right:48px;
+}
+
 .ball {
   display: block;
   width: 100px;
   height: 100px;
-  margin: 30px auto 0;
   background-color: #eee;
   border-radius: 50%;
   box-shadow: inset -25px -25px 40px rgba(0,0,0,.3);
@@ -315,14 +294,19 @@ body {
   background-image: -o-linear-gradient(-45deg, rgba(255,255,220,.2) 0%, transparent 100%);
   background-image: -ms-linear-gradient(-45deg, rgba(255,255,220,.2) 0%, transparent 100%);
   position:absolute;
-  top:40%;
-  left:0%;
-  -webkit-transition: all 1s linear;
+  top:0px;
+  left:0px;
+  -webkit-transition: all 2s linear;
 }
 
-.ball.hit {
-  left:100%;
+.ball.going-right {
   margin-left:-100px;
+  left:100%;
+}
+
+.ball.going-down {
+  margin-top:-100px;
+  top:100%;
 }
 
 .ball {

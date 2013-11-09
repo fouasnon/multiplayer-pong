@@ -1,11 +1,12 @@
 $(document).ready(function () {
 
 	var hitLoop = function () {
-      $(".ball").toggleClass("hit");
-      window.setTimeout(hitLoop, 1000);
+      $(".ball").toggleClass("going-right");
+      $(".ball").toggleClass("going-down");
+      window.setTimeout(hitLoop, 2000);
   	};
 
-// hitLoop();
+ // hitLoop();
 
 
 	var goal = function () {
