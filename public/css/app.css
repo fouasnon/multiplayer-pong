@@ -240,14 +240,14 @@ body {
 }
 
 .notch {
-  width:124px;
-  height:124px;
+  width:38%;
+  height:30%;
   border-radius:50%;
   border:2px solid rgba(255,255,255,0.75);
   box-shadow:0px 1px 2px 2px #666;
   position:absolute;
   left:50%;
-  margin-left:-62px;
+  margin-left:-19%;
   top:20%;
   background:#f66;
   -webkit-transition:1s ease;
