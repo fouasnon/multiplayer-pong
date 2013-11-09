@@ -2,23 +2,15 @@
 
 /* Controllers */
 
-angular.module('myApp.controllers', []).
-  controller('AppCtrl', function ($scope, $http) {
+angular.module('multiplayerPong.controllers', []).
+  controller('MobileCtrl', function ($scope, $timeout, Socket) {
+    var socket = new Socket();
+    $scope.name = 'Mobile';
+    console.log(socket);
 
-    $http({
-      method: 'GET',
-      url: '/api/name'
-    }).
-    success(function (data, status, headers, config) {
-      $scope.name = data.name;
-    }).
-    error(function (data, status, headers, config) {
-      $scope.name = 'Error!'
-    });
-
-  }).
-  controller('MyCtrl1', function ($scope) {
-    // write Ctrl here
+    // $timeout(function(){
+    //   socket.send('Yo Dawg!');
+    // }, 1000)
 
   }).
   controller('MyCtrl2', function ($scope) {
