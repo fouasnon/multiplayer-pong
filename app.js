@@ -7,9 +7,14 @@ var express = require('express'),
   routes = require('./routes'),
   api = require('./routes/api'),
   http = require('http'),
-  path = require('path');
+  path = require('path'),
+WebSocketServer = require('ws').Server;
+
+
 
 var app = module.exports = express();
+var server = http.createServer(app);
+var wss = new WebSocketServer({server: server});
 
 
 /**
@@ -52,6 +57,19 @@ app.get('/api/name', api.name);
 app.get('*', routes.index);
 
 
+/**
+ * WebSockets!
+ */
+wss.on('connection', function(ws) {
+  var id = setInterval(function() {
+    ws.send(JSON.stringify(process.memoryUsage()), function() { /* ignore errors */ });
+  }, 100);
+  console.log('started client interval');
+  ws.on('close', function() {
+    console.log('stopping client interval');
+    clearInterval(id);
+  });
+});
 /**
  * Start Server
  */
