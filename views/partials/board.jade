@@ -1,5 +1,7 @@
 .board-container
   h1 SocketBall.biz
+  .score.left 234
+  .score.right 234
   .board
     .ball
     .paddle.left(position="leftPosition", move-paddle="true")
@@ -9,3 +11,6 @@
       span {{game.team.left.size}} users
     p Right Team:
       span {{game.team.right.size}} users
+  .goal
+    h1 GOAL!!!
+
