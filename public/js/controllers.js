@@ -88,18 +88,22 @@ angular.module('multiplayerPong.controllers', []).
       console.log('connected');
       ws.send(JSON.stringify({clientId: $scope.clientId, clientType:'board', messageType: 'register'}));
     };
-    
+
     ws.onmessage = function(data, flags) {
       data = JSON.parse(data.data);
-
-      switch(data.messageType) {
-      case "board":
+      if (data.messageType==='game') {
+        $scope.$apply(function(){
+          $scope.game = data.game;
+          $scope.leftPosition = data.game.left.y;
+          $scope.rightPosition = data.game.right.y;
+        });
+      }
+      else if (data.messageType==='goal') {
         $scope.$apply(function(){
           $scope.game = data;
           $scope.leftPosition = data.paddles.left.x;
           $scope.rightPosition = data.paddles.right.x;
         });
-
       }
     };
   });

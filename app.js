@@ -5,9 +5,11 @@
 
 var express = require('express'),
   routes = require('./routes'),
+  util = require('util'),
   api = require('./routes/api'),
   http = require('http'),
   path = require('path'),
+  events = require('events'),
   WebSocketServer = require('ws').Server;
 
 var app = module.exports = express();
@@ -63,90 +65,158 @@ var socketClients = {
   right: [],
   boards: []
 };
-var gameStateTransform = {
-  left: {
-    lastVal: .5,
-    vals: []
-  },
-  right: {
-    lastVal: .5,
-    vals: []
-  },
-  ball: {
-    x: {
-      position: 0,
-      velocity: 1,
-      direction: 1
-    },
-    y: {
-      position: 0,
-      velocity: -1,
-      direction: 0
+
+/*
+  THE GAME!
+*/
+
+var Game = function() {
+  
+  var that = this;
+  var updateScore = function(interval){
+    update();
+    var rounds = that.state.team.left.score + that.state.team.right.score;
+    
+    // ball is 20%
+    // paddle is 32%
+    
+    var bt = that.state.ball.x.position; // ball top
+    var bb = bt + 20; // ball bottom
+
+    // check if it's left or right ball
+    if (rounds%2===0) {
+      // check right
+      var pt = that.state.right.y;
+      var pb = pt + 20; 
+      var offensivePaddle = 'left'; // this is who gets the point for
+      // a miss
+    } else {
+      var pt = that.state.left.y;
+      var pb = pt + 20; 
+      var offensivePaddle = 'right'; 
     }
-  },
-  team: {
+    
+    if ((bt > pt && bt < pb) || (bb > pb && bb < pt)) {
+      // THEN GOAL MUTHERFUCKER!
+      that.emit('defended', offensivePaddle);
+    } else {
+      that.state.ball.x.velocity = -(rounds + 1);
+      that.state.ball.y.velocity = 1;
+      that.state.team[offensivePaddle].score += 1
+      that.emit('goal', offensivePaddle);
+    }
+    setTimeout(function(){
+      updateScore(interval);
+    }, interval);
+  };
+  var update = function() {
+    var nl = socketClients.left.length;
+    var nr = socketClients.right.length;
+    var nlx = that.state.left.yTransforms.length;
+    var nrx = that.state.right.yTransforms.length;
+
+    // Change paddle positions
+    if (nlx > 0 && nl > 0) {
+      that.state.left.y = that.state.left.yTransforms.reduce(function(previousValue, currentValue){
+        return previousValue + currentValue;
+      }, 0) / nlx;
+    } else if (nrx > 0 && nr > 0) {
+      that.state.right.y = that.state.right.yTransforms.reduce(function(previousValue, currentValue){
+        return previousValue + currentValue;
+      }, 0) / nrx;
+    }
+
+    // Update number of player
+    that.state.team.left.players = nl;
+    that.state.team.right.players = nr;
+
+    // Clear Transforms
+    that.state.left.yTransforms = [];
+    that.state.right.yTransforms = [];
+
+
+    var timeDelta = new Date() - that.state.updated_at;
+
+    // Calculate ball vectors.
+    var yBallPos = that.state.ball.y.position + that.state.ball.y.velocity*timeDelta;
+    if (yBallPos < 0) {
+      yBallPos = Math.abs(yBallPos);
+    } else if (yBallPos > 1) {
+      yBallPos = yBallPos % 1;
+    }
+    that.state.ball.y.position = yBallPos;
+
+    // This is where we check for a goal.
+    var xBallPos = that.state.ball.x.position + that.state.ball.x.velocity*timeDelta;
+    if (xBallPos < 0) {
+      // did left score or miss?
+      xBallPos = Math.abs(xBallPos);
+    } else if (xBallPos > 1) {
+      // did left score or miss?
+      xBallPos = xBallPos % 1;
+    }
+    that.state.ball.x.position = yBallPos;
+
+    // leave this at the end
+    that.state.updated_at = new Date();
+  };
+  that.state = {
+    created_at: new Date(),
+    updated_at: new Date(),
     left: {
-      score: 0
+      y: .5,
+      yTransforms: []
     },
     right: {
-      score: 0
+      y: .5,
+      yTransforms: []
+    },
+    ball: {
+      x: {
+        position: 0,
+        velocity: 1
+      },
+      y: {
+        position: 0,
+        velocity: -1
+      }
+    },
+    team: {
+      left: {
+        players: 0,
+        score: 0
+      },
+      right: {
+        players: 0,
+        score: 0
+      }
     }
-  }
+  };
+  that.get = function(){
+    update();
+    return that.state;
+  };
+  that.addRightData = function(pos){
+    that.state.right.yTransforms.push(pos);
+  };
+  that.addLeftData = function(pos){
+    that.state.left.yTransforms.push(pos);
+  };
+  updateScore(3000);
+  return that
 };
+util.inherits(Game, events.EventEmitter);
 
-var sendGame = function(ws, interval) {
+var sendGame = function(ws, game, interval) {
   interval = interval || 100;
   var intervalId = setInterval(function() {
 //    console.log('Sending Game')
-    ws.send(JSON.stringify(getGame(interval)));  
+    ws.send(JSON.stringify({game: game.get(), messageType: 'game'}));
   }, interval);
   ws.on('close', function() {
     console.log('Clearing Game Broadcast!');
     clearInterval(intervalId);
   });
-};
-
-var getGame = function(interval) {
-  var nlx = gameStateTransform.left.vals.length;
-  var nrx = gameStateTransform.right.vals.length;
-  var nl = socketClients.left.length;
-  var nr = socketClients.right.length;
-
-  if (nlx > 0 && nl > 0) {
-    gameStateTransform.left.lastVal = gameStateTransform.left.vals.reduce(function(previousValue, currentValue){
-      return previousValue + currentValue;
-    }, 0) / nlx;
-  } else if (nrx > 0 && nr > 0) {
-    gameStateTransform.right.lastVal = gameStateTransform.right.vals.reduce(function(previousValue, currentValue){
-      return previousValue + currentValue;
-    }, 0) / nrx;
-  }
-
-  var game = {
-    messageType: 'board',
-    paddles: {
-      left: {
-        x: gameStateTransform.left.lastVal
-      },
-      right: {
-        x: gameStateTransform.right.lastVal
-      }
-    },
-    team: {
-      left: {
-        size: nl,
-        score: 0
-      },
-      right: {
-        size: nr,
-        score: 0
-      }
-    },
-    ball: gameStateTransform.ball
-  };
-  gameStateTransform.left.vals = [];
-  gameStateTransform.right.vals = [];
-  return game;
 };
 
 var registerClient = function(ws, data) {
@@ -189,27 +259,34 @@ var unregisterClient = function(client) {
   }
 };
 
-var updateCoords = function(data) {
+var updateCoords = function(game, data) {
 //  console.log('Got Coords!');
   if (data.paddle==='left') {
-    gameStateTransform.left.vals.push((90 - data.position.x)/90);
+    game.addLeftData((90 - data.position.x)/90);
   } else if (data.paddle==='right') {
-    gameStateTransform.right.vals.push((90 - data.position.x)/90);
+    game.addRightData((90 - data.position.x)/90);
   }
 };
 
 wss.on('connection', function(ws) {
   var client;
   console.log('Connection Made!')
+  CurrentGame.on('goal', function(paddle){
+    console.log('goal');
+    console.log(paddle);
+    console.log(CurrentGame.state.team[paddle].score);
+  });
+  CurrentGame.on('miss', function(paddle){
+  });
 
   ws.on('message', function(data){
     data = JSON.parse(data);
     if (data.messageType==='coords') {
-      updateCoords(data);
+      updateCoords(CurrentGame, data);
     } else if (data.messageType==='register') {
       client = registerClient(ws, data);
     }
-    sendGame(ws, 100);
+    sendGame(ws, CurrentGame, 100);
   });
 
   ws.on('close', function() {
@@ -218,6 +295,8 @@ wss.on('connection', function(ws) {
     }
   });
 });
+
+var CurrentGame = new Game();
 
 
 /**
