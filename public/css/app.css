@@ -150,7 +150,7 @@ body {
   top: 0; left: 0; bottom: 0; right: 0;
   background:rgba(0,0,0,0.9);
   -webkit-transition: 0.8s;
-  opacity:1;
+  opacity:0;
   pointer-events:none;
   z-index:99999;
 }
@@ -329,7 +329,7 @@ body {
   position:absolute;
   top:0px;
   left:0px;
-  -webkit-transition: all 2s linear;
+  -webkit-transition: all 4s linear;
 }
 
 .ball.going-right {
