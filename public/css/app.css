@@ -377,7 +377,6 @@ body {
   position:absolute;
   top:0px;
   left:0px;
-  -webkit-transition: all 3s linear;
 }
 
 .ball.going-right {

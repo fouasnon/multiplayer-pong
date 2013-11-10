@@ -1,11 +1,11 @@
 .board-container
-  h1 SocketBall.biz
+  h1 SocketBall.biz {{message}}
   img(src="img/header-instructions.png")
-  .score.left 1
-  .score.right 0
+  .score.left {{game.team.left.score}}
+  .score.right {{game.team.right.score}}
   .board
     .ball-container
-      .ball
+      .ball(ball="true", init-x="score.ball.x.position", init-y="score.ball.y.position", vx="game.ball.x.velocity", vy="game.ball.y.velocity", interval="score.ball.x.interval")
       .paddle.left(position="leftPosition", move-paddle="true")
       .paddle.right(position="rightPosition", move-paddle="true")
   .stats

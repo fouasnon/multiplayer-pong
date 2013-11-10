@@ -100,9 +100,20 @@ angular.module('multiplayerPong.controllers', []).
       }
       else if (data.messageType==='goal') {
         $scope.$apply(function(){
+          $scope.message = data.paddle + ' Score!'
+          $scope.score = data.game;
+        });
+      }
+      else if (data.messageType==='safe') {
+        $scope.$apply(function(){
+          $scope.message = data.paddle + ' Safe!'
+          $scope.score = data.game;
+        });
+      }
+      else if (data.messageType==='start') {
+        $scope.$apply(function(){
           $scope.game = data;
-          $scope.leftPosition = data.paddles.left.x;
-          $scope.rightPosition = data.paddles.right.x;
+          $scope.score = data;
         });
       }
     };

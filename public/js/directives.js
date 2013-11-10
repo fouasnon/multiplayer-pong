@@ -21,7 +21,42 @@ angular.module('multiplayerPong.directives', []).
       }
     };
   }).
-directive('moveGutterBall', function (version) {
+  directive('ball', function (version) {
+    return {
+      restrict: 'A',
+      scope: {
+        initX: '=',
+        initY: '=',
+        interval: '=',
+        vx: '=',
+        vy: '='
+      },
+      link: function(scope, elm, attrs) {
+        scope.$watch('x', function(newVal){
+          console.log('x: '+newVal);
+//          elm.css('left', newVal*100+'%');
+        });
+        scope.$watch('vx', function(newVal){
+          console.log('vx: '+newVal);
+          console.log(scope.interval);
+          elm.css('-webkit-transition', scope.interval+'ms linear');
+          if (newVal < 0) {
+            elm.addClass('going-right');
+          } else {
+            elm.removeClass('going-right');
+          }
+
+        });
+        scope.$watch('y', function(newVal){
+          console.log(newVal);
+        });
+        scope.$watch('vy', function(newVal){
+          console.log(newVal);
+        });
+      }
+    };
+  }).
+  directive('moveGutterBall', function (version) {
     return {
       restrict: 'A',
       scope: {
