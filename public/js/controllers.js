@@ -123,6 +123,10 @@ angular.module('multiplayerPong.controllers', []).
         else if (data.messageType==='safe') {
           console.log('safe');
           hitSound();
+          $scope.paddleGlow = data.paddle+'-glow';
+          $timeout(function(){
+            $scope.paddleGlow = '';
+          }, 200)
           $scope.message = data.paddle + ' Safe!'
           $scope.score = data.game;
           $scope.game = data.game;
