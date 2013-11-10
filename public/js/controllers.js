@@ -6,9 +6,12 @@ var registerSocket = function(clientType, $scope, $location) {
   if (port) {
     host += ':'+ port
   }
+  $scope.reconnecting = true;
   var ws = new WebSocket('ws://'+host);
   var clientId = parseInt(Math.random()*1000000000);
+
   ws.onopen = function() {
+    $scope.reconnecting = false;
     ws.send(JSON.stringify({clientId: clientId, clientType: clientType, messageType: 'register'}));
   };
   ws.onmessage = function(data, flags) {
@@ -18,8 +21,19 @@ var registerSocket = function(clientType, $scope, $location) {
       $scope.registration = data;
     }
   };
-  ws.sendJSON = function(data) {
+  ws.sendJSON = function(data, registration) {
+    if (registration && $scope.registration) {
+      data.clientId = $scope.registration.clientId;
+      data.clientType = $scope.registration.clientType;
+      if ($scope.registration.paddle) {
+        data.paddle = $scope.registration.paddle;
+      }
+    }
     ws.send(JSON.stringify(data));
+  };
+  ws.onclose = function(){
+    $scope.reconnecting = true;
+    setTimeout(function(){ ws = registerSocket(clientType, $scope, $location) }, 1000);
   };
   return ws;
 };
@@ -37,13 +51,8 @@ angular.module('multiplayerPong.controllers', [])
     //       $scope.paddle = data.paddle
 
     var sendCoords = function(x){
-      console.log('send')
       if ($scope.registration) {
-        var msg = angular.copy($scope.registration);
-        console.log(msg)
-        msg.messageType = 'coords';
-        msg.position = {x: Math.abs(x)};
-        ws.sendJSON(msg);
+        ws.sendJSON({messageType: 'coords', position: {x: Math.abs(x)}}, true);
       }
     };
 
@@ -71,7 +80,6 @@ angular.module('multiplayerPong.controllers', [])
     var ws = registerSocket('board', $scope, $location);
 
     ws.onmessage = function(data, flags) {
-
       $scope.$apply(function(){
         data = JSON.parse(data.data);
         if (data.messageType!=="game") {
@@ -90,6 +98,7 @@ angular.module('multiplayerPong.controllers', [])
             };
         }
         else if (data.messageType==='game') {
+
           $scope.game = data.game;
           $scope.leftPosition = data.game.left.y;
           $scope.rightPosition = data.game.right.y;
