@@ -111,4 +111,7 @@ angular.module('multiplayerPong.controllers', []).
 
       });
     };
+  }).
+  controller('adminCtrl', function ($scope, $timeout, $location) {
+
   });
