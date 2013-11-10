@@ -50,16 +50,6 @@ angular.module('multiplayerPong.directives', []).
           }
 
         });
-        scope.$watch('explode', function(newVal){
-
-          if (newVal) {
-          elm.addClass('explode');
-            $timeout(function(){
-              elm.removeClass('explode');
-              scope.explode = false;
-            }, 1200);
-          }
-        });
         scope.$watch('y', function(newVal){
           console.log(newVal);
 
