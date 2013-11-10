@@ -414,7 +414,6 @@ body {
   -webkit-transition-property: top, left;
   -webkit-transition-duration: 3s, 3s;
   -webkit-transition-timing-function: linear;
-  -webkit-transition-duration: 2s, 3s;
   top:0px;
   left:0px;
 }
