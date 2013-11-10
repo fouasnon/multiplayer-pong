@@ -22,13 +22,24 @@ body {
 .board-container h1 {
   text-align:center;
   font-size:48px;
-  margin-top:12px;
-  color:#ddd;
+  margin:0px;
+  color:#999;
+  position:absolute;
+  top:12px;
+  width:100%;
+}
+
+.board-container img {
+  width:320px;
+  position:absolute;
+  top:62px;
+  margin-left:-160px;
+  left:50%;
 }
 
 .stats {
   position:absolute;
-  bottom:10px;
+  top:610px;
   width:100%;
   text-align:center;
 }
@@ -37,7 +48,7 @@ body {
   text-align:center;
   display:inline;
   font-size:24px;
-  margin:24px;
+  margin:0px 36px;
 }
 
 .stats span {
@@ -57,8 +68,8 @@ body {
   position: absolute;
   background:rgba(0,0,0,0.3);
   box-shadow:0px 10px 25px #000 inset;
-  border-top:1px solid rgba(255,255,255,0.1);
-  border-bottom:1px solid rgba(255,255,255,0.1);
+  border-top:2px solid rgba(255,255,255,0.2);
+  border-bottom:2px solid rgba(255,255,255,0.2);
 }
 
 .paddle {
@@ -75,24 +86,24 @@ body {
 }
 
 .paddle.left {
-  left:0px;
+  left:-40px;
   top:240px;
-  border-top-right-radius:8px;
-  border-bottom-right-radius:8px;
+  border-top-right-radius:4px;
+  border-bottom-right-radius:4px;
 }
 
 .paddle.right {
-  right:0px;
+  right:-140px;
   top:200px;
-  border-top-left-radius:8px;
-  border-bottom-left-radius:8px;
+  border-top-left-radius:4px;
+  border-bottom-left-radius:4px;
 }
 
 .score {
-  margin:0px 6px;
+  margin:0px 24px;
   font-size:92px;
   position:absolute;
-  color:#666;
+  color:#999;
 }
 
 .score.left {
@@ -139,6 +150,34 @@ body {
 
 .mobile-container .goal h1{
   font-size:64px;
+}
+
+.disconnected {
+  z-index: 100;
+  width:100%;
+  height:100%;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background:rgba(0,0,0,0.9);
+  -webkit-transition: 0.8s;
+  opacity:0;
+  pointer-events:none;
+  z-index:99999;
+}
+
+.message {
+  padding:5%;
+  width:90%;
+  height:200px;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+
+.disconnected h2, h3 {
+  color:#f99;
+  text-align:center;
 }
 
 .goal.visible h1 {
@@ -201,14 +240,14 @@ body {
   width:100%;
   height:60%;
   position: relative;
-  margin-top: 40px;
+  margin-top: 36px;
 }
 
 .gutter {
   width:105px;
   height:100%;
   position: relative;
-  margin:10% auto;
+  margin:0px auto;
   background:#c9c9c9;
   border-radius:128px;
   box-shadow:0px 6px 16px rgba(0,0,0,0.3) inset;
@@ -232,6 +271,24 @@ body {
 .notch:active {
   top:60%;
   background:#6f6;
+}
+
+.team-display {
+  width:100%;
+  height:auto;
+  margin-top:24px;
+}
+
+.team-display h2 {
+  margin:0px;
+  padding:0px;
+  text-align: center;
+  color:#333;
+}
+
+.uppercase {
+  font-size:28px;
+  text-transform: uppercase;
 }
 
 .help {
@@ -282,9 +339,9 @@ body {
 .ball-container {
   position:absolute;
   top:0px;
-  bottom:0px;
+  bottom:100px;
   left:40px;
-  right:40px;
+  right:140px;
 }
 
 .ball {
@@ -301,16 +358,14 @@ body {
   position:absolute;
   top:0px;
   left:0px;
-  -webkit-transition: all 2s linear;
+  -webkit-transition: all 3s linear;
 }
 
 .ball.going-right {
-  margin-left:-100px;
   left:100%;
 }
 
 .ball.going-down {
-  margin-top:-100px;
   top:100%;
 }
 
@@ -325,3 +380,5 @@ body {
     opacity: 0;
     -webkit-transform: scale(3) rotate(10deg);
 }
+
+

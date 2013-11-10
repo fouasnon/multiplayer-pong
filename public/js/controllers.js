@@ -2,8 +2,13 @@
 
 /* Controllers */
 
+
 angular.module('multiplayerPong.controllers', []).
   controller('MobileCtrl', function ($scope, $timeout, $window, $location) {
+    if (!isMobile()) {
+      $location.path('/board');
+      return;
+    } 
     var host = $location.host();
     var port = $location.port()
     if (port) {
@@ -64,6 +69,10 @@ angular.module('multiplayerPong.controllers', []).
     
   }).
   controller('BoardCtrl', function ($scope, $timeout, $location) {
+    if (isMobile()) {
+      $location.path('/controller');
+      return;
+    } 
     var host = $location.host();
     var port = $location.port()
     if (port) {

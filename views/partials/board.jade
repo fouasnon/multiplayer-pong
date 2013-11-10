@@ -1,16 +1,17 @@
 .board-container
   h1 SocketBall.biz
-  .score.left 234
-  .score.right 234
+  img(src="img/header-instructions.png")
+  .score.left 1
+  .score.right 0
   .board
     .ball-container
       .ball
-    .paddle.left(position="leftPosition", move-paddle="true")
-    .paddle.right(position="rightPosition", move-paddle="true")
+      .paddle.left(position="leftPosition", move-paddle="true")
+      .paddle.right(position="rightPosition", move-paddle="true")
   .stats
     p Left Team:
-      span {{game.team.left.players}} users
+      span {{game.team.left.players}} players
     p Right Team:
-      span {{game.team.right.players}} users
+      span {{game.team.right.players}} players
   .goal
     h1 GOAL!!!
