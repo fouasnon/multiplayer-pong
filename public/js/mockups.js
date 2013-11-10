@@ -1,3 +1,20 @@
+
+var goalSoundFile = new Audio("mp3/goal.mp3");
+var hitSoundFile = new Audio("mp3/hit-sound.mp3");
+var wallHitSoundFile = new Audio("mp3/wall-hit.mp3");
+
+var goalSound = function(){
+	goalSoundFile.play();
+};
+
+var hitSound = function(){
+	hitSoundFile.play();
+};
+
+var wallHitSound = function(){
+	wallHitSoundFile.play();
+};
+/*
 // This way seems jenky but works perfect
 var goalSound = function(){
 var audio = document.createElement("audio");
@@ -22,7 +39,7 @@ var audio = document.createElement("audio");
 	    audio.play();
 	}
 };
-
+*/
 /*
 // This way seems better but doesnt allow interrupts
 

@@ -607,3 +607,6 @@ body {
   margin:12px;
 }
 
+audio {
+  visibility:hidden;  
+}
