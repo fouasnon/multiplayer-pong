@@ -131,16 +131,9 @@ angular.module('multiplayerPong.controllers', [])
     };
   }).
   controller('adminCtrl', function ($scope, $timeout, $location) {
-    var ws = registerSocket('controller', $scope, $location);
-    ws.onmessage = function(data, flags) {
-      $scope.$apply(function(){
-        data = JSON.parse(data.data);
-        if (data.messageType==='registration') {
-          $scope.restartGame = function(){
-            ws.sendJSON({clientId: $scope.registration.clientId, clientType:'board', messageType: 'start'});
-          };
-        }
-      });
+    var ws = registerSocket('admin', $scope, $location);
+    $scope.restartGame = function(){
+      ws.sendJSON({clientId: $scope.registration.clientId, clientType:'board', messageType: 'start'});
     };
   });
 
