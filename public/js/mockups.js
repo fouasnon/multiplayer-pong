@@ -4,6 +4,26 @@ $(document).on('click', ".start-button",
 	function () {
 		$(".start-button").addClass("explode");	
 });
+
+-- worked but broke color fading: --
+//Mobile GOAL message
+ws.onmessage = function(data, flags) {
+
+  $scope.$apply(function(){
+    data = JSON.parse(data.data);
+    if (data.messageType==='goal') {
+      $scope.excited = true;
+      $timeout(function(){
+        $scope.excitedClimax = true;
+      }, 600)
+      $timeout(function(){
+        $scope.excited = false;
+        $scope.excitedClimax = false;
+      }, 1600)
+    }
+  });
+};
+
 */
 
 // Mouseover/ Click sound effect- by JavaScript Kit (www.javascriptkit.com)

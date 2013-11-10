@@ -11,7 +11,7 @@
       img.help-contents(src="/img/help-graphic-3.png")
     .team-display
       h2.uppercase {{paddle}} TEAM
-  .goal
+  .goal(ng-class="{visible: excited, explode: excitedClimax}")
     h1 GOAL!!!
   .disconnected
     .message

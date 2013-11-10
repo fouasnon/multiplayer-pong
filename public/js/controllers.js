@@ -44,7 +44,8 @@ angular.module('multiplayerPong.controllers', []).
           })
         );
       }
-    }
+    };
+
     $window.addEventListener("deviceorientation", function(event) {
       $scope.$apply(function(){
         // process event.alpha, event.beta and event.gamma
