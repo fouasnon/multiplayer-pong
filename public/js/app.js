@@ -24,6 +24,10 @@ angular.module('multiplayerPong', [
         templateUrl: 'partials/board',
         controller: 'BoardCtrl'
       }).
+      when('/admin', {
+        templateUrl: 'partials/admin',
+        controller: 'adminCtrl'
+      }).
       otherwise({
         redirectTo: function(params, path, search) {
           if (isMobile()) {

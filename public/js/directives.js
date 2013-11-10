@@ -69,4 +69,17 @@ angular.module('multiplayerPong.directives', []).
         });
       }
     };
-  });
+  }).
+  directive('explode', function(){
+    return function(scope, elm, attrs) {
+        elm.bind('click', function(e){
+            e.preventDefault();
+            elm.addClass('explode');
+            setTimeout(function(){
+                scope.$apply(function(){
+                    scope.$eval(attrs.remove);
+                });
+            }, 300);
+        });
+    };
+});;

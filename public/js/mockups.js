@@ -1,4 +1,8 @@
-
+// sorry hannah
+$(document).on('click', ".start-button",
+	function () {
+		$(".start-button").addClass("explode");	
+});
 
 
 // Mouseover/ Click sound effect- by JavaScript Kit (www.javascriptkit.com)

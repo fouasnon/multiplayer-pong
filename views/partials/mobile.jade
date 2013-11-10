@@ -8,7 +8,6 @@
     .help(ng-click="open=open?false:true", ng-class="{open:open}")
       img.help-icon(src="/img/help-icon.png", ng-hide="open")
       img.help-contents(src="/img/help-graphic-3.png")
-
     .team-display
       h2.uppercase {{paddle}} TEAM
   .goal
@@ -18,3 +17,5 @@
       h2 You have been disconnected.
       h3 Reconnecting... please wait
       h3 Refresh if you are impatient
+.tutorial(animate explode)
+  img.help-contents(src="/img/help-graphic-3.png")
