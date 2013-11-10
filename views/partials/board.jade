@@ -1,13 +1,13 @@
 .board-container
-  h1 SocketBall.biz {{game.rounds}} {{message}}
+  h1 SocketBall.biz
   img(src="img/header-instructions-2.png")
   .score.left {{game.team.left.score}}
   .score.right {{game.team.right.score}}
   .board
     .ball-container
       .ball(ball="true", init-x="initX", init-y="initY", score="score")
-      .paddle.left(position="leftPosition", move-paddle="true", ng-class="paddleGlow")
-      .paddle.right(position="rightPosition", move-paddle="true", ng-class="paddleGlow")
+      .paddle.left(position="game.left.y", move-paddle="true", ng-class="paddleGlow")
+      .paddle.right(position="game.right.y", move-paddle="true", ng-class="paddleGlow")
   .stats
     p Left Team:
       span {{game.team.left.players}} players

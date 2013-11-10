@@ -63,7 +63,8 @@ app.get('*', routes.index);
 var socketClients = {
   left: [],
   right: [],
-  boards: []
+  boards: [],
+  admins: [],
 };
 
 /*
@@ -162,7 +163,6 @@ var Game = function(startingInterval) {
         console.log('yinterval:' +that.state.ball.y.interval);
         console.log('ytbc:' +timeToBoundaryCollision);
         console.log('DDD----');
-
 
         update();
 
@@ -306,8 +306,6 @@ var Game = function(startingInterval) {
     clearTimeout(updateBoundaryTimeoutId);
     clearTimeout(updateScoreTimeoutId);
   };
-
-
   return that
 };
 util.inherits(Game, events.EventEmitter);
@@ -329,7 +327,7 @@ var sendGame = function(ws, game, interval) {
 
 var registerClient = function(ws, data) {
   data.messageType = 'registration';
-  if (CurrentGame.state.playing===true) {
+  if (CurrentGame.state.playing) {
     data.game = CurrentGame.get();
   }
   if (data.clientType==='controller') {
@@ -357,6 +355,21 @@ var registerClient = function(ws, data) {
         }
       });
     }
+  } else if (data.clientType==='admin') {
+    console.log('Registered New Admin!');
+    socketClients.admins.push(data.clientId);
+    ws.send(JSON.stringify(data));
+    // Let the board start the game if it hasn't started yet;
+    ws.on('message', function(data){
+      data = JSON.parse(data);
+      if (data.messageType==='start') {
+        if (CurrentGame.state.playing) {
+          CurrentGame.end();
+        }
+        CurrentGame = new Game()
+        CurrentGame.start(3000);
+      }
+    });
   }
   return data;
 };

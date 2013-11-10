@@ -1,48 +1,49 @@
 'use strict';
 
+var registerSocket = function(clientType, $scope, $location) {
+  var host = $location.host();
+  var port = $location.port()
+  if (port) {
+    host += ':'+ port
+  }
+  var ws = new WebSocket('ws://'+host);
+  var clientId = parseInt(Math.random()*1000000000);
+  ws.onopen = function() {
+    ws.send(JSON.stringify({clientId: clientId, clientType: clientType, messageType: 'register'}));
+  };
+  ws.onmessage = function(data, flags) {
+    data = JSON.parse(data.data);
+    switch(data.messageType) {
+    case 'registration':
+      $scope.registration = data;
+    }
+  };
+  ws.sendJSON = function(data) {
+    ws.send(JSON.stringify(data));
+  };
+  return ws;
+};
+
 /* Controllers */
+angular.module('multiplayerPong.controllers', [])
 
-
-angular.module('multiplayerPong.controllers', []).
-  controller('MobileCtrl', function ($scope, $timeout, $window, $location) {
+/* Mobile Controller */
+  .controller('MobileCtrl', function ($scope, $timeout, $window, $location, $route) {
     if (!isMobile()) {
       $location.path('/board');
       return;
     } 
-    var host = $location.host();
-    var port = $location.port()
-    if (port) {
-      host += ':'+ port
-    }
-    var ws = new WebSocket('ws://'+host);
-
-    $scope.clientId = parseInt(Math.random()*1000000000);
-
-    ws.onopen = function() {
-      ws.send(JSON.stringify({clientId: $scope.clientId, clientType: 'controller', messageType: 'register'}));
-    };
-
-    ws.onmessage = function(data, flags) {
-      data = JSON.parse(data.data);
-      switch(data.messageType) {
-      case 'registration':
-        $scope.paddle = data.paddle
-        $scope.registration = data;
-      }
-    };
+    var ws = registerSocket('controller', $scope, $location);
+    //       $scope.paddle = data.paddle
 
     var sendCoords = function(x){
-      if ($scope.paddle) {
-        ws.send(
-          JSON.stringify({
-            messageType: 'coords',
-            paddle: $scope.paddle,
-            clientId: $scope.cliendId,
-            position: {
-              x: Math.abs(x)
-            }
-          })
-        );
+      console.log('send')
+      if ($scope.registration) {
+        var msg = angular.copy($scope.registration);
+        console.log(msg)
+        msg.messageType = 'coords';
+        msg.position = {x: Math.abs(x)};
+        ws.sendJSON(msg);
       }
     };
 
@@ -58,48 +59,34 @@ angular.module('multiplayerPong.controllers', []).
         $scope.gutterBallPosition = (90-Math.abs(event.beta))/90;
         $scope.controllerColor = (Math.abs(event.beta))/90/100;
       });
-
     }, true);
-  }).
-  controller('BoardCtrl', function ($scope, $timeout, $location) {
+  })
+
+/* Mobile Controller */
+  .controller('BoardCtrl', function ($scope, $timeout, $location) {
     if (isMobile()) {
       $location.path('/controller');
       return;
     } 
-    var host = $location.host();
-    var port = $location.port()
-    if (port) {
-      host += ':'+ port
-    }
-    var ws = new WebSocket('ws://'+host);
-
-    $scope.leftPosition = 0;
-    $scope.rightPosition = 0;
-    $scope.clientId = parseInt(Math.random()*1000000000);
-
-    ws.onopen = function() {
-      console.log('connected');
-      ws.send(JSON.stringify({clientId: $scope.clientId, clientType:'board', messageType: 'register'}));
-    };
+    var ws = registerSocket('board', $scope, $location);
 
     ws.onmessage = function(data, flags) {
 
       $scope.$apply(function(){
         data = JSON.parse(data.data);
+        console.log('Got Message:' + data.messageType);
         if (data.messageType==='registration') {
           // Let them start the game after registration;
-          console.log('registered');
           if (data.game) {
             $scope.initX = data.game.ball.x.position;
             $scope.initY = data.game.ball.y.position;
           }
           $scope.registration = data;
-          $scope.playGame = function(){
-            ws.send(JSON.stringify({clientId: $scope.clientId, clientType:'board', messageType: 'start'}));
-          };
+            $scope.playGame = function(){
+              ws.sendJSON({clientId: $scope.registration.clientId, clientType:'board', messageType: 'start'});
+            };
         }
         else if (data.messageType==='game') {
-          console.log('game');
           $scope.game = data.game;
           $scope.leftPosition = data.game.left.y;
           $scope.rightPosition = data.game.right.y;
@@ -113,7 +100,6 @@ angular.module('multiplayerPong.controllers', []).
             $scope.excited = false;
             $scope.excitedClimax = false;
           }, 1500)
-          console.log('goal');
           goalSound();
           $scope.explodeBall = true;
           $scope.message = data.paddle + ' Score!'
@@ -121,8 +107,6 @@ angular.module('multiplayerPong.controllers', []).
           $scope.game = data.game;
         }
         else if (data.messageType==='safe') {
-          console.log('safe');
-
           hitSound();
           $scope.paddleGlow = data.paddle+'-glow';
           $timeout(function(){
@@ -131,29 +115,33 @@ angular.module('multiplayerPong.controllers', []).
           $scope.message = data.paddle + ' Safe!'
           $scope.score = data.game;
           $scope.game = data.game;
-
-
         }
         else if (data.messageType==='boundary') {
-          console.log('boundary');
           wallHitSound();
           $scope.score = data.game;
           $scope.game = data.game;
-          console.log(data);          
-
         }
         else if (data.messageType==='newGame') {
-          console.log('newGame');
-          $scope.message = 'Start';
           $scope.initX = data.game.ball.x.position;
           $scope.initY = data.game.ball.y.position;
           $scope.game = data.game;
           $scope.score = data.game;
         }
-
       });
     };
   }).
   controller('adminCtrl', function ($scope, $timeout, $location) {
-
+    var ws = registerSocket('controller', $scope, $location);
+    ws.onmessage = function(data, flags) {
+      $scope.$apply(function(){
+        data = JSON.parse(data.data);
+        if (data.messageType==='registration') {
+          $scope.restartGame = function(){
+            ws.sendJSON({clientId: $scope.registration.clientId, clientType:'board', messageType: 'start'});
+          };
+        }
+      });
+    };
   });
+
+

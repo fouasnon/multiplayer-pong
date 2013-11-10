@@ -1,6 +1,6 @@
 .mobile-container
   .mobile
-    .tint(ng-class="paddle", bg-tint="controllerColor", controller-color="true")
+    .tint(ng-class="registration.paddle", bg-tint="controllerColor", controller-color="true")
     .header
       h1 SocketBall Controller
     .slider
@@ -10,7 +10,7 @@
       img.help-icon(src="/img/help-icon.png", ng-hide="open")
       img.help-contents(src="/img/help-graphic-3.png")
     .team-display
-      h2.uppercase {{paddle}} TEAM
+      h2.uppercase {{registration.paddle}} TEAM
   .goal(ng-class="{visible: excited, explode: excitedClimax}")
     h1 GOAL!!!
   .disconnected

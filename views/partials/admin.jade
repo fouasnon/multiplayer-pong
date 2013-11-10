@@ -1,6 +1,6 @@
 .mobile-container.admin
   .mobile
     h1 IN CASE OF EMERGENCY:
-    button.reset-button(ng-click="reset=reset?false:true") RESET<br />GAME
+    button.reset-button(ng-click="reset=true;restartGame();") RESET<br />GAME
   .admin-message(ng-show="reset")
     h1 GAME RESTARTED
