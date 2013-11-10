@@ -94,6 +94,12 @@ var Game = function(startingInterval) {
       var defensivePaddle = 'left'; // this is who gets the point for
     }
     
+    console.log('offense: '+ offensivePaddle);
+    console.log('defense: '+ defensivePaddle);
+    console.log('bb'+ bb);
+    console.log('pt'+ pt);
+    console.log('bt'+ bt);
+    console.log('pb'+ pb);
     if ((bt >= pt && bt <= pb) || (bb <= pb && bb >= pt)) {
       console.log('safe');
       
@@ -103,6 +109,7 @@ var Game = function(startingInterval) {
       } else {
         that.state.ball.x.velocity = direction/500;
       }
+      that.state.ball.x.interval = Math.abs(1/that.state.ball.x.velocity);
       that.emit('safe', {game: that.state, paddle: offensivePaddle});
     } else {
       console.log('goal');
@@ -111,6 +118,7 @@ var Game = function(startingInterval) {
 //      that.state.ball.y.position = offensivePaddle==='right' ? 1 : 0;
       that.state.ball.y.velocity = 1;
       that.state.team[offensivePaddle].score += 1
+      that.state.ball.x.interval = Math.abs(1/that.state.ball.x.velocity);
       that.emit('goal', {game: that.state, paddle: offensivePaddle});
     }
 
@@ -122,8 +130,6 @@ var Game = function(startingInterval) {
       function(){
         updateScore(that.state.ball.x.interval);
       }, that.state.ball.x.interval);
-
-    that.state.ball.x.interval = Math.abs(1/that.state.ball.x.velocity);
   };
   var update = function() {
     var nl = socketClients.left.length;
@@ -184,7 +190,7 @@ var Game = function(startingInterval) {
       yTransforms: []
     },
     right: {
-      y: .5,
+      y: 0,
       yTransforms: []
     },
     ball: {
@@ -195,7 +201,7 @@ var Game = function(startingInterval) {
       },
       y: {
         position: 0,
-        velocity: -1
+        velocity: 0
       }
     },
     team: {
