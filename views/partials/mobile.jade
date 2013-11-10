@@ -10,8 +10,8 @@
     .help(ng-click="open=open?false:true", ng-class="{open:open}")
       img.help-icon(src="/img/help-icon.png", ng-hide="open")
       img.help-contents(src="/img/help-graphic-3.png")
+      span(ng-hide="open") HELP
     .team-display
-      h2 you are on the 
       h2.uppercase {{paddle}} TEAM
   .goal
     h1 GOAL!!!
