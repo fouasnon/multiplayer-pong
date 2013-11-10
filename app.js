@@ -76,8 +76,8 @@ var coinToss = function() {
 var Game = function(startingInterval) {
   var that = this;
   var updateIntervalId;
-  var updateBoundaryIntervalId;
-  var updateScoreIntervalId;
+  var updateBoundaryTimeoutId;
+  var updateScoreTimeoutId;
   var startingInterval = startingInterval || 3000;
   var updateScore = function(interval){
     console.log('Score Update');
@@ -136,6 +136,8 @@ var Game = function(startingInterval) {
       that.emit('goal', {game: that.state, paddle: offensivePaddle});
     }
 
+    console.log('XXX:' +that.state.ball.x.position);
+    console.log('XXXV:' +that.state.ball.x.velocity);
     console.log('yvel:' +that.state.ball.y.velocity);
     // use current velocity here since it was changed above.
     if (that.state.ball.y.velocity < 0) {
@@ -145,17 +147,16 @@ var Game = function(startingInterval) {
       var timeToBoundaryCollision = (1-that.state.ball.y.position)/that.state.ball.y.velocity;
     }
     if (timeToBoundaryCollision < that.state.ball.x.interval && that.state.ball.y.velocity!==0) {
-      updateBoundaryIntervalId = setInterval(function(){
+      updateBoundaryTimeoutId = setTimeout(function(){
         that.state.ball.y.velocity = -that.state.ball.y.velocity;
         that.state.ball.y.interval = Math.abs(1/that.state.ball.y.velocity);
         that.emit('boundary', {game: that.state});
-        clearInterval(updateBoundaryIntervalId);
       }, timeToBoundaryCollision);
     }
 
     that.state.rounds += 1;
 
-    updateScoreIntervalId = setInterval(
+    updateScoreTimeoutId = setTimeout(
       function(){
         updateScore(that.state.ball.x.interval);
       }, that.state.ball.x.interval);
@@ -189,34 +190,34 @@ var Game = function(startingInterval) {
 
     // Calculate ball vectors.
     var yBallPos = that.state.ball.y.position + that.state.ball.y.velocity*timeDelta;
-    if (yBallPos < 0) {
-      yBallPos = Math.abs(yBallPos);
-    } else if (yBallPos > 1) {
-      yBallPos = yBallPos % 1;
-    }
+    // if (yBallPos < 0) {
+    //   yBallPos = Math.abs(yBallPos);
+    // } else if (yBallPos > 1) {
+    //   yBallPos = 1 - yBallPos % 1;
+    // }
     that.state.ball.y.position = yBallPos;
 
     
     // This is where we check for a goal.
+
     var xBallPos = that.state.ball.x.position + that.state.ball.x.velocity*timeDelta;
-    if (xBallPos < 0) {
-      xBallPos = Math.abs(xBallPos);
-    } else if (xBallPos > 1) {
-      xBallPos = xBallPos % 1;
-    }
+    // console.log('XXXA:' +that.state.ball.x.position);
+    // if (xBallPos < 0) {
+    //   xBallPos = Math.abs(xBallPos);
+    // } else if (xBallPos > 1) {
+    //   xBallPos = 1 - xBallPos % 1;
+    // }
     that.state.ball.x.position = xBallPos;
 
-    console.log('xballpos:' +xBallPos);
     // leave this at the end
     that.state.updated_at = new Date();
   };
-
-  // The Game Model
+    // The Game Model
   that.state = {
     playing: false,
     rounds: 0,
     left: {
-      y: .5,
+      y: 0,
       yTransforms: []
     },
     right: {
@@ -269,22 +270,21 @@ var Game = function(startingInterval) {
 
     that.emit('start', that.state);
 
-    updateScoreIntervalId = setInterval(function(){
+    updateScoreTimeoutId = setTimeout(function(){
       updateScore(that.state.ball.x.interval);
-      clearInterval(updateScoreIntervalId);
     }, that.state.ball.x.interval);
 
     // Refresh Rate
     updateIntervalId = setInterval(function(){
       update();
-    }, 10);
+    }, 100);
   };
 
   that.end = function(){
     console.log('Game End!');
     clearInterval(updateIntervalId);
-    clearInterval(updateBoundaryIntervalId);
-    clearInterval(updateScoreIntervalId);
+    clearTimeout(updateBoundaryTimeoutId);
+    clearTimeout(updateScoreTimeoutId);
   };
 
 
@@ -309,6 +309,9 @@ var sendGame = function(ws, game, interval) {
 
 var registerClient = function(ws, data) {
   data.messageType = 'registration';
+  if (CurrentGame.state.playing===true) {
+    data.game = CurrentGame.get();
+  }
   if (data.clientType==='controller') {
     console.log('Registered New Controller!');
     if (socketClients.left.length > socketClients.right.length) {
@@ -396,7 +399,7 @@ wss.on('connection', function(ws) {
     console.log('start');
     // this crashes when client disconnects
     if (open) {
-      ws.send(JSON.stringify({game: game, messageType: 'start'}));
+      ws.send(JSON.stringify({game: game, messageType: 'newGame'}));
     }
   });
   CurrentGame.on('safe', function(data){

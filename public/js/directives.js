@@ -30,10 +30,22 @@ angular.module('multiplayerPong.directives', []).
         score: '='
       },
       link: function(scope, elm, attrs) {
+        // scope.$watch('initX', function(newVal){
+        //   console.log('left', newVal*100+'%');
+        //   elm.css('left', newVal*100+'%');
+        // });
+        // scope.$watch('initY', function(newVal){
+        //   console.log('top', newVal*100+'%');
+        //   elm.css('top', newVal*100+'%');
+        // });
         scope.$watch('score', function(newVal, oldVal){
           if (newVal) {
             console.log('xinterval: '+newVal.ball.x.interval);
             console.log('yinterval: '+newVal.ball.y.interval);
+            console.log('xvel: '+1/newVal.ball.x.velocity);
+            console.log('yvel: '+1/newVal.ball.y.velocity);
+            console.log('xpos: '+newVal.ball.x.position);
+            console.log('ypos: '+newVal.ball.y.position);
             elm.css('-webkit-transition-duration', newVal.ball.y.interval+'ms, '+newVal.ball.x.interval+'ms');
 
             if (newVal.ball.x.velocity > 0) {

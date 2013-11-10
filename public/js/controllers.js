@@ -89,6 +89,10 @@ angular.module('multiplayerPong.controllers', []).
         if (data.messageType==='registration') {
           // Let them start the game after registration;
           console.log('registered');
+          if (data.game) {
+            $scope.initX = data.game.ball.x.position;
+            $scope.initY = data.game.ball.y.position;
+          }
           $scope.registration = data;
           $scope.playGame = function(){
             ws.send(JSON.stringify({clientId: $scope.clientId, clientType:'board', messageType: 'start'}));
@@ -129,9 +133,11 @@ angular.module('multiplayerPong.controllers', []).
           $scope.score = data.game;
           $scope.game = data.game;
         }
-        else if (data.messageType==='start') {
-          console.log('start');
+        else if (data.messageType==='newGame') {
+          console.log('newGame');
           $scope.message = 'Start';
+          $scope.initX = data.game.ball.x.position;
+          $scope.initY = data.game.ball.y.position;
           $scope.game = data.game;
           $scope.score = data.game;
         }
