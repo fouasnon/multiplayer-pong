@@ -5,7 +5,7 @@
   .score.right {{game.team.right.score}}
   .board
     .ball-container
-      .ball(ball="true", init-x="score.ball.x.position", init-y="score.ball.y.position", vx="score.ball.x.velocity", vy="score.ball.y.velocity", interval="score.ball.x.interval", explode="explodeBall", score="score")
+      .ball(ball="true", init-x="score.ball.x.position", init-y="score.ball.y.position", vx="score.ball.x.velocity", vy="score.ball.y.velocity", interval="score.ball.x.interval", score="score")
       .paddle.left(position="leftPosition", move-paddle="true")
       .paddle.right(position="rightPosition", move-paddle="true")
   .stats
@@ -15,4 +15,4 @@
       span {{game.team.right.players}} players
   .goal
     h1 GOAL!!!
-  button.start-button(animate explode) PLAY
+  button.start-button(explode) PLAY

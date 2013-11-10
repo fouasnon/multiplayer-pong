@@ -80,6 +80,19 @@ angular.module('multiplayerPong.directives', []).
       }
     };
   }).
+  directive('controllerColor', function (version) {
+    return {
+      restrict: 'A',
+      scope: {
+        bgTint: '='
+      },
+      link: function(scope, elm, attrs) {
+        scope.$watch('bgTint', function(newVal){
+          elm.css('opacity', newVal*100);
+        });
+      }
+    };
+  }).
   directive('explode', function(){
     return function(scope, elm, attrs) {
         elm.bind('click', function(e){
