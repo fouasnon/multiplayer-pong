@@ -2,6 +2,10 @@
 
 // Declare app level module which depends on filters, and services
 
+var isMobile = function () {
+   return (navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i)) || (navigator.userAgent.match(/iPad/i)) || (navigator.userAgent.match(/android/i));
+};
+
 angular.module('multiplayerPong', [
   'ngRoute',
   'multiplayerPong.controllers',
@@ -12,7 +16,7 @@ angular.module('multiplayerPong', [
 ]).
   config(function ($routeProvider, $locationProvider) {
     $routeProvider.
-      when('/', {
+      when('/controller', {
         templateUrl: 'partials/mobile',
         controller: 'MobileCtrl'
       }).
@@ -21,7 +25,13 @@ angular.module('multiplayerPong', [
         controller: 'BoardCtrl'
       }).
       otherwise({
-        redirectTo: '/'
+        redirectTo: function(params, path, search) {
+          if (isMobile()) {
+              return '/controller';
+            } else {
+              return '/board';
+            }
+        }
       });
     $locationProvider.html5Mode(true);
   });
