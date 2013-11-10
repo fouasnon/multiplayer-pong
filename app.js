@@ -69,27 +69,32 @@ var socketClients = {
 /*
   THE GAME!
 */
+var coinToss = function() {
+  return Math.random() > .5 ? -1 : 1;
+}
 
 var Game = function(startingInterval) {
   var that = this;
+  var updateIntervalId;
+  var updateScoreTimeoutId;
   var startingInterval = startingInterval || 3000;
   var updateScore = function(interval){
     console.log('Score Update');
-    var bt = that.state.ball.y.position*100; // ball top
-    var bb = bt + 20; // ball bottom
+    var bt = that.state.ball.y.position*400;  // 400=ball container
+    var bb = bt + 100; // 100=ball height
     // check if it's left or right ball
-    var direction = (that.state.rounds%2===0) ? -1 : 1;
-    console.log('direction'+direction);
-    console.log('rounds'+that.state.rounds);
-    if (direction < 0) {
+
+    var xDirection = (that.state.ball.x.velocity < 0) ? 1 : -1;
+
+    if (xDirection < 0) {
       // check right
-      var pt = that.state.right.y*100;
-      var pb = pt + 32; 
+      var pt = that.state.right.y*340; // 340=paddle container
+      var pb = pt + 160;  //160=padde height
       var offensivePaddle = 'left'; // this is who gets the point for
       var defensivePaddle = 'right'; // this is who gets the point for
     } else {
-      var pt = that.state.left.y*100;
-      var pb = pt + 32; 
+      var pt = that.state.left.y*340;
+      var pb = pt + 160;
       var offensivePaddle = 'right'; 
       var defensivePaddle = 'left'; // this is who gets the point for
     }
@@ -100,33 +105,56 @@ var Game = function(startingInterval) {
     console.log('pt'+ pt);
     console.log('bt'+ bt);
     console.log('pb'+ pb);
+
     if ((bt >= pt && bt <= pb) || (bb <= pb && bb >= pt)) {
       console.log('safe');
       
+      // Velocity and intervals
       var damper = 1.12;
       if (interval > 500) {
-        that.state.ball.x.velocity = direction*Math.abs(that.state.ball.x.velocity)*damper;
+        that.state.ball.x.velocity = xDirection*Math.abs(that.state.ball.x.velocity)*damper;
       } else {
-        that.state.ball.x.velocity = direction/500;
+        that.state.ball.x.velocity = xDirection/500;
       }
       that.state.ball.x.interval = Math.abs(1/that.state.ball.x.velocity);
+      that.state.ball.y.velocity = coinToss()*that.state.ball.y.velocity/(1+that.state.ball.y.velocity*coinToss()*100*Math.random());
+      that.state.ball.y.interval = Math.abs(1/that.state.ball.y.velocity);
+
       that.emit('safe', {game: that.state, paddle: offensivePaddle});
     } else {
-      console.log('goal');
-      that.state.ball.x.velocity = direction/startingInterval;
-//      that.state.ball.x.position = offensivePaddle==='right' ? 1 : 0;
-//      that.state.ball.y.position = offensivePaddle==='right' ? 1 : 0;
-      that.state.ball.y.velocity = 1;
-      that.state.team[offensivePaddle].score += 1
+      // Velocity and intervals
+      that.state.ball.x.velocity = xDirection/startingInterval;
       that.state.ball.x.interval = Math.abs(1/that.state.ball.x.velocity);
+      that.state.ball.y.velocity = coinToss()*that.state.ball.y.velocity/(1+that.state.ball.y.velocity*coinToss()*100*Math.random());
+
+//      that.state.ball.y.velocity = coinToss()*that.state.ball.y.velocity;
+      that.state.ball.y.interval = Math.abs(1/that.state.ball.y.velocity);
+      
+      // Update Score
+      that.state.team[offensivePaddle].score += 1
       that.emit('goal', {game: that.state, paddle: offensivePaddle});
     }
 
-    console.log('vel', that.state.ball.x.velocity);
-    console.log('------');
+
+    console.log('yvel:' +that.state.ball.y.velocity);
+    if (that.state.ball.y.velocity < 0) {
+      // going up!
+      var timeToBoundaryCollision = -that.state.ball.y.position/that.state.ball.y.velocity;
+    } else {
+      var timeToBoundaryCollision = (1-that.state.ball.y.position)/that.state.ball.y.velocity;
+    }
+    console.log('tbc:' + timeToBoundaryCollision);
+    if (timeToBoundaryCollision < that.state.ball.x.interval && that.state.ball.y.velocity!==0) {
+      setTimeout(function(){
+        that.state.ball.y.interval = Math.abs(1/that.state.ball.y.velocity);
+        that.state.ball.y.velocity = -that.state.ball.y.velocity;
+        that.emit('boundary', {game: that.state});
+      }, timeToBoundaryCollision);
+    }
+
     that.state.rounds += 1;
 
-    setTimeout(
+    updateScoreTimeoutId = setTimeout(
       function(){
         updateScore(that.state.ball.x.interval);
       }, that.state.ball.x.interval);
@@ -170,10 +198,8 @@ var Game = function(startingInterval) {
     // This is where we check for a goal.
     var xBallPos = that.state.ball.x.position + that.state.ball.x.velocity*timeDelta;
     if (xBallPos < 0) {
-      // did left score or miss?
       xBallPos = Math.abs(xBallPos);
     } else if (xBallPos > 1) {
-      // did left score or miss?
       xBallPos = xBallPos % 1;
     }
     that.state.ball.x.position = xBallPos;
@@ -201,7 +227,7 @@ var Game = function(startingInterval) {
       },
       y: {
         position: 0,
-        velocity: 0
+        velocity: 1/(startingInterval+1)
       }
     },
     team: {
@@ -215,15 +241,19 @@ var Game = function(startingInterval) {
       }
     }
   };
+
   that.get = function(){
     return that.state;
   };
+
   that.addRightData = function(pos){
     that.state.right.yTransforms.push(pos);
   };
+
   that.addLeftData = function(pos){
     that.state.left.yTransforms.push(pos);
   };
+
   that.start = function(){
     console.log('Game Start!');
     that.state.updated_at = new Date();
@@ -233,15 +263,23 @@ var Game = function(startingInterval) {
 
     that.emit('start', that.state);
 
-    setTimeout(function(){
+    updateScoreTimeoutId = setTimeout(function(){
       updateScore(that.state.ball.x.interval);
     }, that.state.ball.x.interval);
 
     // Refresh Rate
-    setInterval(function(){
+    updateIntervalId = setInterval(function(){
       update();
     }, 10);
-  }
+  };
+
+  that.end = function(){
+    console.log('Game End!');
+    clearInterval(updateIntervalId)
+    clearTimeout(updateScoreTimeoutId)
+  };
+
+
   return that
 };
 util.inherits(Game, events.EventEmitter);
@@ -249,9 +287,12 @@ util.inherits(Game, events.EventEmitter);
 var sendGame = function(ws, game, interval) {
   interval = interval || 100;
   var intervalId = setInterval(function() {
-//    console.log('Sending Game')
-    ws.send(JSON.stringify({game: game.get(), messageType: 'game'}));
+    //    console.log('Sending Game')
+    if (game.state.playing) {
+      ws.send(JSON.stringify({game: game.get(), messageType: 'game'}));
+    }
   }, interval);
+
   ws.on('close', function() {
     console.log('Clearing Game Broadcast!');
     clearInterval(intervalId);
@@ -259,9 +300,9 @@ var sendGame = function(ws, game, interval) {
 };
 
 var registerClient = function(ws, data) {
+  data.messageType = 'registration';
   if (data.clientType==='controller') {
     console.log('Registered New Controller!');
-    data.messageType = 'registration';
     if (socketClients.left.length > socketClients.right.length) {
       data.paddle = 'right';
       socketClients.right.push(data.clientId);
@@ -274,6 +315,17 @@ var registerClient = function(ws, data) {
   } else if (data.clientType==='board') {
     console.log('Registered New Board!');
     socketClients.boards.push(data.clientId);
+    ws.send(JSON.stringify(data));
+    // Let the board start the game if it hasn't started yet;
+
+    if (CurrentGame.state.playing===false) {
+      ws.on('message', function(data){
+        data = JSON.parse(data);
+        if (data.messageType==='start') {
+          CurrentGame.start(3000);
+        }
+      });
+    }
   }
   return data;
 };
@@ -295,6 +347,10 @@ var unregisterClient = function(client) {
   }
   else if (client.clientType==='board') {
     removeIfPresent(socketClients.boards, client.clientId);
+    if (socketClients.boards.length===0) {
+      CurrentGame.end();
+      CurrentGame = new Game(3000);
+    }
   }
 };
 
@@ -312,7 +368,9 @@ wss.on('connection', function(ws) {
   var open = true;
   console.log('Connection Made!')
   ws.on('message', function(data){
+
     data = JSON.parse(data);
+    console.log('messageType');
     if (data.messageType==='coords') {
       updateCoords(CurrentGame, data);
     } else if (data.messageType==='register') {
@@ -341,6 +399,13 @@ wss.on('connection', function(ws) {
       ws.send(JSON.stringify({game: data.game, messageType: 'safe', paddle: data.paddle}));
     }
   });
+  CurrentGame.on('boundary', function(data){
+    console.log('boundary');
+    // this crashes when client disconnects
+    if (open) {
+      ws.send(JSON.stringify({game: data.game, messageType: 'boundary'}));
+    }
+  });
   ws.on('close', function() {
     open = false;
     if (client) {
@@ -349,10 +414,7 @@ wss.on('connection', function(ws) {
   });
 });
 
-var CurrentGame = new Game();
-setTimeout(function(){
-  CurrentGame.start(3000);
-}, 10000)
+var CurrentGame = new Game(3000);
 
 /**
  * Start Server

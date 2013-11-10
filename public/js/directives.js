@@ -27,41 +27,29 @@ angular.module('multiplayerPong.directives', []).
       scope: {
         initX: '=',
         initY: '=',
-        interval: '=',
         explode: '=',
-        vx: '=',
-        vy: '=',
         score: '='
       },
       link: function(scope, elm, attrs) {
-        scope.$watch('x', function(newVal){
-//          console.log('x: '+newVal);
-//          elm.css('left', newVal*100+'%');
-        });
+        
         scope.$watch('score', function(newVal, oldVal){
           if (newVal) {
-          console.log('dinterval: '+newVal.ball.x.interval);
-          elm.css('-webkit-transition', newVal.ball.x.interval+'ms linear');
+            console.log('xinterval: '+newVal.ball.x.interval);
+            console.log('yinterval: '+newVal.ball.y.interval);
+            elm.css('-webkit-transition-duration', newVal.ball.y.interval+'ms, '+newVal.ball.x.interval+'ms');
 
-          if (newVal.ball.x.velocity > 0) {
-            elm.addClass('going-right');
-          } else {
-            elm.removeClass('going-right');
+            if (newVal.ball.x.velocity > 0) {
+              elm.addClass('going-right');
+            } else {
+              elm.removeClass('going-right');
+            }
+            
+            if (newVal.ball.y.velocity > 0) {
+              elm.addClass('going-down');
+            } else {
+              elm.removeClass('going-down');
+            }
           }
-
-
-
-          }
-        });
-        scope.$watch('vx', function(newVal){
-//          console.log('vx: '+newVal);
-        });
-        scope.$watch('y', function(newVal){
-//          console.log(newVal);
-
-        });
-        scope.$watch('vy', function(newVal){
-//          console.log(newVal);
         });
       }
     };
