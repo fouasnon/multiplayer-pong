@@ -28,7 +28,7 @@ body {
 
 .stats {
   position:absolute;
-  bottom:10px;
+  top:610px;
   width:100%;
   text-align:center;
 }
@@ -262,6 +262,24 @@ body {
   background:#6f6;
 }
 
+.team-display {
+  width:100%;
+  height:auto;
+  margin-top:24px;
+}
+
+.team-display h2 {
+  margin:0px;
+  padding:0px;
+  text-align: center;
+  color:#333;
+}
+
+.uppercase {
+  font-size:28px;
+  text-transform: uppercase;
+}
+
 .help {
   position:absolute;
   bottom:10px;
@@ -329,7 +347,7 @@ body {
   position:absolute;
   top:0px;
   left:0px;
-  -webkit-transition: all 4s linear;
+  -webkit-transition: all 3s linear;
 }
 
 .ball.going-right {
