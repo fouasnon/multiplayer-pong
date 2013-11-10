@@ -81,9 +81,24 @@ angular.module('multiplayerPong.directives', []).
             elm.addClass('explode');
             setTimeout(function(){
                 scope.$apply(function(){
-                    scope.$eval(attrs.remove);
+                  scope.$eval(attrs.remove);
+                elm.remove();
                 });
             }, 300);
+        });
+    };
+}).
+  directive('fadeOut', function(){
+    return function(scope, elm, attrs) {
+        elm.bind('click', function(e){
+            e.preventDefault();
+            elm.addClass('fade-out');
+            setTimeout(function(){
+                scope.$apply(function(){
+                  scope.$eval(attrs.remove);
+                elm.remove();
+                });
+            }, 600);
         });
     };
 });

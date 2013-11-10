@@ -193,9 +193,15 @@ body {
 }
 
 .explode {
-  -webkit-transform: scale(2) rotate(10deg)!important;
+  -webkit-transform: scale(2);
   opacity:0!important;
   pointer-events:none;
+}
+
+.fade-out {
+  -webkit-transform: scale(0.25);
+  opacity:0!important;
+  -webkit-transition:.6s ease-in-out!important;
 }
 
 /* Mobile Layout */
@@ -207,7 +213,7 @@ body {
   margin: 0;
   padding: 0;
   border: 0;
-
+  overflow:hidden;
 }
 
 .mobile {
@@ -471,20 +477,17 @@ body {
   outline: none;
 }
 
-
-
 .tutorial {
   position:absolute;
   margin:0px;
-  bottom:0px;
-  left:0px;
-  width:0px;
-  height:0px;
   width:80%;
-  height:80%;
+  height:100%;
   background:rgba(0,0,0,0.9);
+  background-image:url('/img/help-graphic-3.png');
+  background-size:100% auto;
+  background-position:center 36px;
+  background-repeat:no-repeat;
   border-radius:0px;
-  bottom:12%;
   left:10%;
   box-shadow:0px 0px 55px 75px rgba(0,0,0,0.9);
   -webkit-transition:.4s ease-in-out;
@@ -497,4 +500,5 @@ body {
   height:auto;
   margin:0px;
   -webkit-transition:.5s ease-in-out;
+  position:fixed;
 }
