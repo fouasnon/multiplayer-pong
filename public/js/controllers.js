@@ -74,7 +74,10 @@ angular.module('multiplayerPong.controllers', [])
 
       $scope.$apply(function(){
         data = JSON.parse(data.data);
-        console.log('Got Message:' + data.messageType);
+        if (data.messageType!=="game") {
+          console.log(data);
+          console.log($scope.registration);
+        }
         if (data.messageType==='registration') {
           // Let them start the game after registration;
           if (data.game) {
@@ -136,5 +139,3 @@ angular.module('multiplayerPong.controllers', [])
       ws.sendJSON({clientId: $scope.registration.clientId, clientType:'board', messageType: 'start'});
     };
   });
-
-
