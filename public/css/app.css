@@ -149,7 +149,7 @@ body {
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
   height:180px;
-  width:50%;
+  width:60%;
   font-size:124px;
   -webkit-transition: 0.3s;
   -webkit-transform: translateY(-50px) translateZ(-500px) rotate(30deg);
@@ -164,6 +164,7 @@ body {
 
 .mobile-container .goal h1{
   font-size:64px;
+  width:auto;
 }
 
 .disconnected {
@@ -198,6 +199,15 @@ body {
   -webkit-transform: scale(2);
   opacity:0!important;
   pointer-events:none;
+}
+
+.mobile-container .explode {
+  -webkit-transform: scale(1)!important;
+  opacity:0!important;
+}
+
+.mobile-container .explode h1 {
+  -webkit-transform: scale(1.2)!important;
 }
 
 .fade-out {
@@ -269,7 +279,7 @@ body {
   height:100%;
   position: relative;
   margin:0px auto;
-  background:#c9c9c9;
+  background:rgba(100,100,100,0.5);
   border-radius:128px;
   box-shadow:0px 6px 16px rgba(0,0,0,0.3) inset;
   border:2px solid rgba(0,0,0,0.3);
@@ -391,6 +401,7 @@ body {
   -webkit-transition-property: top, left;
   -webkit-transition-duration: 3s, 3s;
   -webkit-transition-timing-function: linear;
+  -webkit-transition-duration: 2s, 3s;
   top:0px;
   left:0px;
 }
@@ -466,8 +477,8 @@ body {
   top:200px;
   left:50%;
   margin-left:-125px;
-  background:#4AE275;
-  color:#fff;
+  background:#eee;
+  color:#333;
   font-size:36px;
   border:none;
   -webkit-transition: all 0.5s ease;
@@ -477,7 +488,7 @@ body {
 
 .start-button:active {
   box-shadow: 0px 15px 50px rgba(0,0,0,0.7) inset;
-  background:#008F00;
+  background:#999;
   color:#ccc;
   margin-top:2px;
   outline-width: 0px;
@@ -520,9 +531,9 @@ body {
 }
 
 .tint.left {
-  background-color:rgba(255,0,0,0.6);
+  background-color:rgba(200,0,0,0.6);
 }
 
 .tint.right {
-  background-color:rgba(0,0,255,0.6);
+  background-color:rgba(0,0,200,0.6);
 }
