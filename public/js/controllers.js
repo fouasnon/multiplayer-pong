@@ -110,6 +110,7 @@ angular.module('multiplayerPong.controllers', []).
             $scope.excitedClimax = false;
           }, 1500)
           console.log('goal');
+          goalSound();
           $scope.explodeBall = true;
           $scope.message = data.paddle + ' Score!'
           $scope.score = data.game;
@@ -117,12 +118,14 @@ angular.module('multiplayerPong.controllers', []).
         }
         else if (data.messageType==='safe') {
           console.log('safe');
+          hitSound();
           $scope.message = data.paddle + ' Safe!'
           $scope.score = data.game;
           $scope.game = data.game;
         }
         else if (data.messageType==='boundary') {
           console.log('boundary');
+          wallHitSound();
           $scope.score = data.game;
           $scope.game = data.game;
         }

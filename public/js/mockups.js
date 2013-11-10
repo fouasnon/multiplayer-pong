@@ -1,3 +1,31 @@
+var goalSound = function(){
+var audio = document.createElement("audio");
+	if (audio != null && audio.canPlayType && audio.canPlayType("audio/mp3")) {
+	    audio.src = "mp3/goal.mp3";
+	    audio.play();
+	}
+};
+
+var hitSound = function(){
+var audio = document.createElement("audio");
+	if (audio != null && audio.canPlayType && audio.canPlayType("audio/mp3")) {
+	    audio.src = "mp3/hit-sound.mp3";
+	    audio.play();
+	}
+};
+
+var wallHitSound = function(){
+var audio = document.createElement("audio");
+	if (audio != null && audio.canPlayType && audio.canPlayType("audio/mp3")) {
+	    audio.src = "mp3/wall-hit.mp3";
+	    audio.play();
+	}
+};
+
+
+
+    
+
 // sorry hannah
 /*
 $(document).on('click', ".start-button",
