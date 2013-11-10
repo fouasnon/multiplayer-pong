@@ -80,8 +80,9 @@ angular.module('multiplayerPong.controllers', []).
     };
 
     ws.onmessage = function(data, flags) {
+
       $scope.$apply(function(){
-        data = JSON.parse(data.data);
+      data = JSON.parse(data.data);
         if (data.messageType==='game') {
           console.log('game');
           $scope.game = data.game;
@@ -90,6 +91,7 @@ angular.module('multiplayerPong.controllers', []).
         }
         else if (data.messageType==='goal') {
           console.log('goal');
+          console.log('cinterval:'+data.game.ball.x.interval);
           $scope.explodeBall = true;
           $scope.message = data.paddle + ' Score!'
           $scope.score = data.game;
@@ -97,6 +99,7 @@ angular.module('multiplayerPong.controllers', []).
         }
         else if (data.messageType==='safe') {
           console.log('safe');
+          console.log('cinterval:'+data.game.ball.x.interval);
           $scope.message = data.paddle + ' Safe!'
           $scope.score = data.game;
           $scope.game = data.game;

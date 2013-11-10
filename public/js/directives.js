@@ -30,32 +30,38 @@ angular.module('multiplayerPong.directives', []).
         interval: '=',
         explode: '=',
         vx: '=',
-        vy: '='
+        vy: '=',
+        score: '='
       },
       link: function(scope, elm, attrs) {
         scope.$watch('x', function(newVal){
-          console.log('x: '+newVal);
+//          console.log('x: '+newVal);
 //          elm.css('left', newVal*100+'%');
         });
-        scope.$watch('interval', function(newVal){
-          console.log('interval: '+newVal);
-          elm.css('-webkit-transition', newVal+'ms linear');
-        });
-        scope.$watch('vx', function(newVal){
-          console.log('vx: '+newVal);
-          if (newVal > 0) {
+        scope.$watch('score', function(newVal, oldVal){
+          if (newVal) {
+          console.log('dinterval: '+newVal.ball.x.interval);
+          elm.css('-webkit-transition', newVal.ball.x.interval+'ms linear');
+
+          if (newVal.ball.x.velocity > 0) {
             elm.addClass('going-right');
           } else {
             elm.removeClass('going-right');
           }
 
+
+
+          }
+        });
+        scope.$watch('vx', function(newVal){
+//          console.log('vx: '+newVal);
         });
         scope.$watch('y', function(newVal){
-          console.log(newVal);
+//          console.log(newVal);
 
         });
         scope.$watch('vy', function(newVal){
-          console.log(newVal);
+//          console.log(newVal);
         });
       }
     };
