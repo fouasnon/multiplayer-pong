@@ -57,8 +57,6 @@ angular.module('multiplayerPong.controllers', []).
       });
 
     }, true);
-
-    
   }).
   controller('BoardCtrl', function ($scope, $timeout, $location) {
     if (isMobile()) {

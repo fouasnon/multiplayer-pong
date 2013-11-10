@@ -70,12 +70,11 @@ var socketClients = {
   THE GAME!
 */
 
-var Game = function() {
-  
+var Game = function(startingInterval) {
   var that = this;
+  var startingInterval = startingInterval || 3000;
   var updateScore = function(interval){
     update();
-    var rounds = that.state.team.left.score + that.state.team.right.score;
     
     // ball is 20%
     // paddle is 32%
@@ -83,13 +82,12 @@ var Game = function() {
     var bt = that.state.ball.y.position*100; // ball top
     var bb = bt + 20; // ball bottom
     // check if it's left or right ball
-    if (rounds%2===0) {
+    if (that.state.rounds%2===0) {
       // check right
       var pt = that.state.right.y*100;
       var pb = pt + 32; 
       var offensivePaddle = 'left'; // this is who gets the point for
       var defensivePaddle = 'right'; // this is who gets the point for
-
     } else {
       var pt = that.state.left.y*100;
       var pb = pt + 32; 
@@ -98,10 +96,15 @@ var Game = function() {
     }
     
     if ((bt >= pt && bt <= pb) || (bb <= pb && bb >= pt)) {
+
+      that.state.ball.x.velocity = startingInterval;
+      that.state.ball.x.position = offensivePaddle==='right' ? 0 : 1;
+      that.state.ball.y.position = offensivePaddle==='right' ? 0 : 1;
+
       that.emit('safe', defensivePaddle);
     } else {
       var damper = 1.12;
-      var direction = (rounds%2===0) ? -1 : 1;
+      var direction = (that.state.rounds%2===0) ? -1 : 1;
       if (interval > 500) {
         that.state.ball.x.velocity = direction*that.state.ball.x.velocity*damper;
       } else {
@@ -112,23 +115,20 @@ var Game = function() {
       that.emit('goal', offensivePaddle);
     }
 
+    that.state.rounds += 1;
     that.state.ball.x.interval = Math.abs(1/that.state.ball.x.velocity);
     setTimeout(
       function(){
         updateScore(that.state.ball.x.interval);
-      }, that.state.ball.x.interval);
-
-    // that.state.ball.x.interval = Math.abs(1/that.state.ball.x.velocity);
-    // setTimeout(function(){
-    //   updateScore(that.state.ball.x.interval);
-    // }, that.state.ball.x.interval);
+      }, that.state.ball.x.interval
+    );
   };
   var update = function() {
     var nl = socketClients.left.length;
     var nr = socketClients.right.length;
     var nlx = that.state.left.yTransforms.length;
     var nrx = that.state.right.yTransforms.length;
-    var rounds = that.state.team.left.score + that.state.team.right.score;
+
     // Change paddle positions
     if (nlx > 0 && nl > 0) {
       that.state.left.y = that.state.left.yTransforms.reduce(function(previousValue, currentValue){
@@ -176,8 +176,9 @@ var Game = function() {
   that.state = {
     created_at: new Date(),
     updated_at: new Date(),
+    rounds: 0,
     left: {
-      y: .5,
+      y: 0,
       yTransforms: []
     },
     right: {
@@ -186,9 +187,9 @@ var Game = function() {
     },
     ball: {
       x: {
-        interval: 6000,
+        interval: startingInterval,
         position: 0,
-        velocity: 1/6000
+        velocity: 1/startingInterval
       },
       y: {
         position: 0,
@@ -320,6 +321,7 @@ wss.on('connection', function(ws) {
     }
   });
   CurrentGame.on('safe', function(paddle){
+    console.log('safe');
     if (open) {
       ws.send(JSON.stringify({game: CurrentGame.get(), messageType: 'safe', paddle: paddle}));
     }
