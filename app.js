@@ -76,7 +76,8 @@ var coinToss = function() {
 var Game = function(startingInterval) {
   var that = this;
   var updateIntervalId;
-  var updateScoreTimeoutId;
+  var updateBoundaryIntervalId;
+  var updateScoreIntervalId;
   var startingInterval = startingInterval || 3000;
   var updateScore = function(interval){
     console.log('Score Update');
@@ -84,15 +85,17 @@ var Game = function(startingInterval) {
     var bb = bt + 100; // 100=ball height
     // check if it's left or right ball
 
-    var xDirection = (that.state.ball.x.velocity < 0) ? 1 : -1;
+    var xDirection = (that.state.ball.x.velocity < 0) ? -1 : 1;
+    var yDirection = (that.state.ball.y.velocity < 0) ? -1 : 1;
 
-    if (xDirection < 0) {
-      // check right
+    if (xDirection > 0) {
+      // going right
       var pt = that.state.right.y*340; // 340=paddle container
       var pb = pt + 160;  //160=padde height
       var offensivePaddle = 'left'; // this is who gets the point for
       var defensivePaddle = 'right'; // this is who gets the point for
     } else {
+      // going left
       var pt = that.state.left.y*340;
       var pb = pt + 160;
       var offensivePaddle = 'right'; 
@@ -112,49 +115,47 @@ var Game = function(startingInterval) {
       // Velocity and intervals
       var damper = 1.12;
       if (interval > 500) {
-        that.state.ball.x.velocity = xDirection*Math.abs(that.state.ball.x.velocity)*damper;
+        that.state.ball.x.velocity = -xDirection*Math.abs(that.state.ball.x.velocity)*damper;
       } else {
-        that.state.ball.x.velocity = xDirection/500;
+        that.state.ball.x.velocity = -xDirection/500;
       }
       that.state.ball.x.interval = Math.abs(1/that.state.ball.x.velocity);
       that.state.ball.y.velocity = coinToss()*that.state.ball.y.velocity/(1+that.state.ball.y.velocity*coinToss()*100*Math.random());
       that.state.ball.y.interval = Math.abs(1/that.state.ball.y.velocity);
 
-      that.emit('safe', {game: that.state, paddle: offensivePaddle});
+      that.emit('safe', {game: that.state, paddle: defensivePaddle});
     } else {
       // Velocity and intervals
-      that.state.ball.x.velocity = xDirection/startingInterval;
-      that.state.ball.x.interval = Math.abs(1/that.state.ball.x.velocity);
-      that.state.ball.y.velocity = coinToss()*that.state.ball.y.velocity/(1+that.state.ball.y.velocity*coinToss()*100*Math.random());
-
-//      that.state.ball.y.velocity = coinToss()*that.state.ball.y.velocity;
-      that.state.ball.y.interval = Math.abs(1/that.state.ball.y.velocity);
+      that.state.ball.x.velocity = -xDirection/startingInterval;
+      that.state.ball.x.interval = startingInterval;
+      that.state.ball.y.velocity = -yDirection/startingInterval;
+      that.state.ball.y.interval = startingInterval;
       
       // Update Score
       that.state.team[offensivePaddle].score += 1
       that.emit('goal', {game: that.state, paddle: offensivePaddle});
     }
 
-
     console.log('yvel:' +that.state.ball.y.velocity);
+    // use current velocity here since it was changed above.
     if (that.state.ball.y.velocity < 0) {
       // going up!
       var timeToBoundaryCollision = -that.state.ball.y.position/that.state.ball.y.velocity;
     } else {
       var timeToBoundaryCollision = (1-that.state.ball.y.position)/that.state.ball.y.velocity;
     }
-    console.log('tbc:' + timeToBoundaryCollision);
     if (timeToBoundaryCollision < that.state.ball.x.interval && that.state.ball.y.velocity!==0) {
-      setTimeout(function(){
-        that.state.ball.y.interval = Math.abs(1/that.state.ball.y.velocity);
+      updateBoundaryIntervalId = setInterval(function(){
         that.state.ball.y.velocity = -that.state.ball.y.velocity;
+        that.state.ball.y.interval = Math.abs(1/that.state.ball.y.velocity);
         that.emit('boundary', {game: that.state});
+        clearInterval(updateBoundaryIntervalId);
       }, timeToBoundaryCollision);
     }
 
     that.state.rounds += 1;
 
-    updateScoreTimeoutId = setTimeout(
+    updateScoreIntervalId = setInterval(
       function(){
         updateScore(that.state.ball.x.interval);
       }, that.state.ball.x.interval);
@@ -194,6 +195,7 @@ var Game = function(startingInterval) {
       yBallPos = yBallPos % 1;
     }
     that.state.ball.y.position = yBallPos;
+
     
     // This is where we check for a goal.
     var xBallPos = that.state.ball.x.position + that.state.ball.x.velocity*timeDelta;
@@ -203,6 +205,8 @@ var Game = function(startingInterval) {
       xBallPos = xBallPos % 1;
     }
     that.state.ball.x.position = xBallPos;
+
+    console.log('xballpos:' +xBallPos);
     // leave this at the end
     that.state.updated_at = new Date();
   };
@@ -212,7 +216,7 @@ var Game = function(startingInterval) {
     playing: false,
     rounds: 0,
     left: {
-      y: 0,
+      y: .5,
       yTransforms: []
     },
     right: {
@@ -226,8 +230,9 @@ var Game = function(startingInterval) {
         velocity: 1/startingInterval
       },
       y: {
+        interval: startingInterval,
         position: 0,
-        velocity: 1/(startingInterval+1)
+        velocity: 1/startingInterval
       }
     },
     team: {
@@ -260,11 +265,13 @@ var Game = function(startingInterval) {
     that.state.created_at = new Date();
     that.state.playing = true;
     that.state.ball.x.interval = startingInterval;
+    that.state.ball.y.interval = startingInterval;
 
     that.emit('start', that.state);
 
-    updateScoreTimeoutId = setTimeout(function(){
+    updateScoreIntervalId = setInterval(function(){
       updateScore(that.state.ball.x.interval);
+      clearInterval(updateScoreIntervalId);
     }, that.state.ball.x.interval);
 
     // Refresh Rate
@@ -275,8 +282,9 @@ var Game = function(startingInterval) {
 
   that.end = function(){
     console.log('Game End!');
-    clearInterval(updateIntervalId)
-    clearTimeout(updateScoreTimeoutId)
+    clearInterval(updateIntervalId);
+    clearInterval(updateBoundaryIntervalId);
+    clearInterval(updateScoreIntervalId);
   };
 
 
@@ -370,7 +378,6 @@ wss.on('connection', function(ws) {
   ws.on('message', function(data){
 
     data = JSON.parse(data);
-    console.log('messageType');
     if (data.messageType==='coords') {
       updateCoords(CurrentGame, data);
     } else if (data.messageType==='register') {
