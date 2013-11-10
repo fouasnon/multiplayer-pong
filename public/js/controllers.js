@@ -55,6 +55,7 @@ angular.module('multiplayerPong.controllers', []).
           sendCoords(event.beta);
         }
         $scope.gutterBallPosition = (90-Math.abs(event.beta))/90;
+        $scope.controllerColor = (Math.abs(event.beta))/90/100;
       });
 
     }, true);

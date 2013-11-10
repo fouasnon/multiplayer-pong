@@ -1,11 +1,12 @@
 .mobile-container
   .mobile
+    .tint(ng-class="paddle", bg-tint="controllerColor", controller-color="true")
     .header
       h1 SocketBall Controller
     .slider
       .gutter
       .ball(position="gutterBallPosition", move-gutter-ball="true")
-    .help(ng-click="open=open?true:false", ng-class="{open:open}")
+    .help(ng-click="open=open?false:true", ng-class="{open:open}")
       img.help-icon(src="/img/help-icon.png", ng-hide="open")
       img.help-contents(src="/img/help-graphic-3.png")
     .team-display
