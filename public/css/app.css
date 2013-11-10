@@ -131,16 +131,10 @@ body {
   margin: auto;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
-  background:rgba(0,0,0,0.5);
+  background:rgba(0,0,0,0.7);
   -webkit-transition: 0.8s;
   opacity:0;
   pointer-events:none;
-}
-
-.visible {
-  opacity:1;
-  display:block;
-  z-index:9999999;
 }
 
 .goal h1 {
@@ -148,12 +142,13 @@ body {
   margin: auto;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
-  height:100px;
+  height:180px;
   width:100%;
   font-size:124px;
   -webkit-transition: 0.3s;
   -webkit-transform: translateY(-50px) translateZ(300px) rotate(-10deg);
   opacity:0;
+  color:#fff;
 }
 
 .mobile-container .goal h1{
@@ -312,12 +307,20 @@ body {
   cursor: pointer;
 }
 
+.help span {
+  position:absolute;
+  bottom:4px;
+  left:30px;
+  font-size:18px;
+  color:#333;
+}
+
 .help.open {
   width:80%;
   height:80%;
   background:rgba(0,0,0,0.9);
   border-radius:0px;
-  bottom:10%;
+  bottom:12%;
   left:10%;
   box-shadow:0px 0px 75px 75px rgba(0,0,0,0.9);
 }
@@ -339,7 +342,6 @@ body {
   position:absolute;
   bottom:0px;
   left:0px;
-  border-radius:500px;
 }
 
 /* 3d Ball elements */
@@ -389,4 +391,9 @@ body {
     -webkit-transform: scale(3) rotate(10deg);
 }
 
+.visible {
+  opacity:1;
+  display:block;
+  z-index:9999999;
+}
 
