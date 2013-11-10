@@ -21,13 +21,14 @@ angular.module('multiplayerPong.directives', []).
       }
     };
   }).
-  directive('ball', function (version) {
+  directive('ball', function ($timeout) {
     return {
       restrict: 'A',
       scope: {
         initX: '=',
         initY: '=',
         interval: '=',
+        explode: '=',
         vx: '=',
         vy: '='
       },
@@ -42,7 +43,6 @@ angular.module('multiplayerPong.directives', []).
         });
         scope.$watch('vx', function(newVal){
           console.log('vx: '+newVal);
-
           if (newVal > 0) {
             elm.addClass('going-right');
           } else {
@@ -50,8 +50,19 @@ angular.module('multiplayerPong.directives', []).
           }
 
         });
+        scope.$watch('explode', function(newVal){
+
+          if (newVal) {
+          elm.addClass('explode');
+            $timeout(function(){
+              elm.removeClass('explode');
+              scope.explode = false;
+            }, 1200);
+          }
+        });
         scope.$watch('y', function(newVal){
           console.log(newVal);
+
         });
         scope.$watch('vy', function(newVal){
           console.log(newVal);

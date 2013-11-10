@@ -74,7 +74,6 @@ var Game = function(startingInterval) {
   var that = this;
   var startingInterval = startingInterval || 3000;
   var updateScore = function(interval){
-    update();
     console.log('Score Update');
     var bt = that.state.ball.y.position*100; // ball top
     var bb = bt + 20; // ball bottom
@@ -211,9 +210,6 @@ var Game = function(startingInterval) {
     }
   };
   that.get = function(){
-    if (that.state.playing) {
-      update();
-    }
     return that.state;
   };
   that.addRightData = function(pos){
@@ -233,10 +229,13 @@ var Game = function(startingInterval) {
 
     setTimeout(function(){
       updateScore(that.state.ball.x.interval);
-
     }, that.state.ball.x.interval);
-  }
 
+    // Refresh Rate
+    setInterval(function(){
+      update();
+    }, 10);
+  }
   return that
 };
 util.inherits(Game, events.EventEmitter);
@@ -312,10 +311,9 @@ wss.on('connection', function(ws) {
       updateCoords(CurrentGame, data);
     } else if (data.messageType==='register') {
       client = registerClient(ws, data);
-      sendGame(ws, CurrentGame, 100);
+      sendGame(ws, CurrentGame, 50);
     }
   });
-
   CurrentGame.on('goal', function(data){
     console.log('goal');
     // this crashes when client disconnects

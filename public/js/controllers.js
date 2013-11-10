@@ -85,12 +85,12 @@ angular.module('multiplayerPong.controllers', []).
         if (data.messageType==='game') {
           console.log('game');
           $scope.game = data.game;
-//          $scope.score = data.game;
           $scope.leftPosition = data.game.left.y;
           $scope.rightPosition = data.game.right.y;
         }
         else if (data.messageType==='goal') {
           console.log('goal');
+          $scope.explodeBall = true;
           $scope.message = data.paddle + ' Score!'
           $scope.score = data.game;
           $scope.game = data.game;
