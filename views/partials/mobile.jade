@@ -13,7 +13,7 @@
       h2.uppercase {{registration.paddle}} TEAM
   .goal(ng-class="{visible: excited, explode: excitedClimax}")
     h1 GOAL!!!
-  .disconnected
+  .disconnected(ng-show="reconnecting")
     .message
       h2 You have been disconnected.
       h3 Reconnecting... please wait

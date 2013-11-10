@@ -13,6 +13,16 @@
       span {{game.team.left.players}} players
     p Right Team:
       span {{game.team.right.players}} players
+    a.twitter(href="http://www.twitter.com/SocketBallz")
+      img(src="img/twitter-icon.png")
+  p.credits SocketBall was made by 
+    a(href='http://twitter.com/hanelifou') hannah 
+    / and 
+    a(href='http://twitter.com/willdjthrill') will 
+    / at 
+    a(href='http://hackathon.launch.co') launch hackathon
   .goal(ng-class="{visible: excited, explode: excitedClimax}")
     h1 GOAL!!!
   button.start-button(explode, ng-click="playGame()", ng-show="!game") PLAY
+  //.waiting(ng-show="!game")
+    h1 WAITING FOR GAME TO START

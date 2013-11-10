@@ -549,3 +549,61 @@ body {
 .tint.right {
   background-color:rgba(0,0,200,0.6);
 }
+
+.waiting {
+  z-index: 100;
+  width:80%;
+  height:200px;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  pointer-events:none;
+}
+
+.goal h1 {
+  text-align:center;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  font-size:124px;
+  color:#fff;
+}
+
+.credits {
+  float:right;
+  color:#ccc;
+  position:absolute;
+  bottom:0px;
+  right:0px;
+  padding:0px 4px;
+  opacity:0.5;
+  -webkit-transition: all 0.3s linear;
+}
+
+.credits:hover {
+  opacity:1;
+}
+
+.credits a {
+  display:inline;
+  color:#eee;
+  -webkit-transition: all 0.3s linear;
+}
+
+.credits a:hover {
+  color:#fff;
+}
+
+.twitter {
+  float:right;
+}
+
+.twitter img{
+  width:36px;
+  display:inline;
+  position:relative;
+  left:0px;
+  top:0px;
+  margin:12px;
+}
+
