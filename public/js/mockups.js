@@ -1,21 +1,19 @@
 
-var goalSoundFile = new Audio("mp3/goal.mp3");
-var hitSoundFile = new Audio("mp3/hit-sound.mp3");
-var wallHitSoundFile = new Audio("mp3/wall-hit.mp3");
+// var goalSoundFile = new Audio("mp3/goal.mp3");
+// var hitSoundFile = new Audio("mp3/hit-sound.mp3");
+// var wallHitSoundFile = new Audio("mp3/wall-hit.mp3");
 
-var goalSound = function(){
-	goalSoundFile.play();
-};
+// var goalSound = function(){
+// 	goalSoundFile.play();
+// };
 
-var hitSound = function(){
-	hitSoundFile.play();
-};
+// var hitSound = function(){
+// 	hitSoundFile.play();
+// };
 
-var wallHitSound = function(){
-	wallHitSoundFile.play();
-};
-/*
-// This way seems jenky but works perfect
+// var wallHitSound = function(){
+// 	wallHitSoundFile.play();
+// };
 var goalSound = function(){
 var audio = document.createElement("audio");
 	if (audio != null && audio.canPlayType && audio.canPlayType("audio/mp3")) {
@@ -39,7 +37,7 @@ var audio = document.createElement("audio");
 	    audio.play();
 	}
 };
-*/
+
 /*
 // This way seems better but doesnt allow interrupts
 
@@ -58,8 +56,6 @@ var hitSound = function(){
 var wallHitSound = function(){
 	wallHitSoundFile.play();
 };
-
-*/
 
     
 
