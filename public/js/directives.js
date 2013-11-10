@@ -27,11 +27,9 @@ angular.module('multiplayerPong.directives', []).
       scope: {
         initX: '=',
         initY: '=',
-        explode: '=',
         score: '='
       },
       link: function(scope, elm, attrs) {
-        
         scope.$watch('score', function(newVal, oldVal){
           if (newVal) {
             console.log('xinterval: '+newVal.ball.x.interval);
