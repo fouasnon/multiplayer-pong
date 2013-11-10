@@ -14,6 +14,6 @@
       span {{game.team.left.players}} players
     p Right Team:
       span {{game.team.right.players}} players
-  .goal
+  .goal(ng-class="{visible: excited, explode: excitedClimax}")
     h1 GOAL!!!
   button.start-button(explode, ng-click="playGame()", ng-show="!game") PLAY

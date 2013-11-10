@@ -100,6 +100,14 @@ angular.module('multiplayerPong.controllers', []).
           $scope.rightPosition = data.game.right.y;
         }
         else if (data.messageType==='goal') {
+          $scope.excited = true;
+          $timeout(function(){
+            $scope.excitedClimax = true;
+          }, 500)
+          $timeout(function(){
+            $scope.excited = false;
+            $scope.excitedClimax = false;
+          }, 1500)
           console.log('goal');
           $scope.explodeBall = true;
           $scope.message = data.paddle + ' Score!'
