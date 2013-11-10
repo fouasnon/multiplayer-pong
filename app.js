@@ -135,10 +135,7 @@ var Game = function(startingInterval) {
       that.state.team[offensivePaddle].score += 1
       that.emit('goal', {game: that.state, paddle: offensivePaddle});
     }
-
-    console.log('XXX:' +that.state.ball.x.position);
-    console.log('XXXV:' +that.state.ball.x.velocity);
-    console.log('yvel:' +that.state.ball.y.velocity);
+    
     // use current velocity here since it was changed above.
     if (that.state.ball.y.velocity < 0) {
       // going up!
@@ -146,10 +143,33 @@ var Game = function(startingInterval) {
     } else {
       var timeToBoundaryCollision = (1-that.state.ball.y.position)/that.state.ball.y.velocity;
     }
+    console.log('AAA----');
+    console.log('yvel:' +1/that.state.ball.y.velocity);
+    console.log('yinterval:' +that.state.ball.y.interval);
+    console.log('ytbc:' +timeToBoundaryCollision);
+    console.log('BBB----');
     if (timeToBoundaryCollision < that.state.ball.x.interval && that.state.ball.y.velocity!==0) {
       updateBoundaryTimeoutId = setTimeout(function(){
+        console.log('yvel:' +1/that.state.ball.y.velocity);
+        console.log('yinterval:' +that.state.ball.y.interval);
+        console.log('ytbc:' +timeToBoundaryCollision);
+        console.log('CCC----');
+
         that.state.ball.y.velocity = -that.state.ball.y.velocity;
         that.state.ball.y.interval = Math.abs(1/that.state.ball.y.velocity);
+
+        console.log('yvel:' +1/that.state.ball.y.velocity);
+        console.log('yinterval:' +that.state.ball.y.interval);
+        console.log('ytbc:' +timeToBoundaryCollision);
+        console.log('DDD----');
+
+
+        update();
+
+        console.log('yvel:' +1/that.state.ball.y.velocity);
+        console.log('yinterval:' +that.state.ball.y.interval);
+        console.log('ytbc:' +timeToBoundaryCollision);
+        console.log('FFFF----');
         that.emit('boundary', {game: that.state});
       }, timeToBoundaryCollision);
     }
@@ -277,7 +297,7 @@ var Game = function(startingInterval) {
     // Refresh Rate
     updateIntervalId = setInterval(function(){
       update();
-    }, 100);
+    }, 10);
   };
 
   that.end = function(){
