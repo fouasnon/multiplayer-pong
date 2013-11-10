@@ -20,7 +20,7 @@ angular.module('multiplayerPong.controllers', []).
     ws.onmessage = function(data, flags) {
       data = JSON.parse(data.data);
       switch(data.messageType) {
-      case "paddle":
+      case 'registration':
         $scope.paddle = data.paddle
       }
     };
@@ -76,7 +76,7 @@ angular.module('multiplayerPong.controllers', []).
 
     ws.onopen = function() {
       console.log('connected');
-      ws.send(JSON.stringify({clientId: $scope.clientId}));
+      ws.send(JSON.stringify({clientId: $scope.clientId, clientType:'board', messageType: 'register'}));
     };
     
     ws.onmessage = function(data, flags) {

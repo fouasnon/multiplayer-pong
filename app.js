@@ -59,10 +59,8 @@ app.get('*', routes.index);
  * WebSockets!
  */
 var socketClients = {
-  controllers: {
-    leftPaddle: [],
-    rightPaddle: []
-  },
+  left: [],
+  right: [],
   boards: []
 };
 var gameStateTransform = {
@@ -99,10 +97,11 @@ var gameStateTransform = {
 var sendGame = function(ws, interval) {
   interval = interval || 100;
   var intervalId = setInterval(function() {
-    console.log('sending game')
+//    console.log('Sending Game')
     ws.send(JSON.stringify(getGame(interval)));  
   }, interval);
   ws.on('close', function() {
+    console.log('Clearing Game Broadcast!');
     clearInterval(intervalId);
   });
 };
@@ -110,8 +109,8 @@ var sendGame = function(ws, interval) {
 var getGame = function(interval) {
   var nlx = gameStateTransform.left.vals.length;
   var nrx = gameStateTransform.right.vals.length;
-  var nl = socketClients.controllers.leftPaddle.length;
-  var nr = socketClients.controllers.rightPaddle.length;
+  var nl = socketClients.left.length;
+  var nr = socketClients.right.length;
 
   if (nlx > 0 && nl > 0) {
     gameStateTransform.left.lastVal = gameStateTransform.left.vals.reduce(function(previousValue, currentValue){
@@ -149,39 +148,74 @@ var getGame = function(interval) {
   gameStateTransform.right.vals = [];
   return game;
 };
+
+var registerClient = function(ws, data) {
+  if (data.clientType==='controller') {
+    console.log('Registered New Controller!');
+    data.messageType = 'registration';
+    if (socketClients.left.length > socketClients.right.length) {
+      data.paddle = 'right';
+      socketClients.right.push(data.clientId);
+      ws.send(JSON.stringify(data));
+    } else {
+      data.paddle = 'left';
+      socketClients.left.push(data.clientId);
+      ws.send(JSON.stringify(data));
+    }
+  } else if (data.clientType==='board') {
+    console.log('Registered New Board!');
+    socketClients.boards.push(data.clientId);
+  }
+  return data;
+};
+
+var removeIfPresent = function(arr, value) {
+  var i = arr.indexOf(value) ;
+  if (i > -1) {
+    arr.splice(i, 1);
+  }
+}
+
+var unregisterClient = function(client) {
+  console.log('Unregistering Client: '+JSON.stringify(client));
+  if (client.clientType==='controller' && client.paddle==='left') {
+    removeIfPresent(socketClients.left, client.clientId);
+  }
+  else if (client.clientType==='controller' && client.paddle==='right') {
+    removeIfPresent(socketClients.right, client.clientId);
+  }
+  else if (client.clientType==='board') {
+    removeIfPresent(socketClients.boards, client.clientId);
+  }
+};
+
+var updateCoords = function(data) {
+//  console.log('Got Coords!');
+  if (data.paddle==='left') {
+    gameStateTransform.left.vals.push((90 - data.position.x)/90);
+  } else if (data.paddle==='right') {
+    gameStateTransform.right.vals.push((90 - data.position.x)/90);
+  }
+};
+
 wss.on('connection', function(ws) {
-  var clientBroadcastInterval;
-  console.log('connection made!')
+  var client;
+  console.log('Connection Made!')
+
   ws.on('message', function(data){
     data = JSON.parse(data);
-    console.log('received coords: %s', data);
-    switch(data.messageType) {
-
-    case "coords":
-      if (data.paddle==='left') {
-        gameStateTransform.left.vals.push((90 - data.position.x)/90);
-      } else if (data.paddle==='right') {
-        gameStateTransform.right.vals.push((90 - data.position.x)/90);
-      }
-
-    case "register":
-      if (data.clientType==='controller') {
-        if (socketClients.controllers.leftPaddle.length > socketClients.controllers.rightPaddle.length) { 
-          socketClients.controllers.rightPaddle.push(data.clientId);
-          ws.send(JSON.stringify({messageType: "paddle", paddle: "right"}));
-        } else {
-          socketClients.controllers.leftPaddle.push(data.clientId);
-          ws.send(JSON.stringify({messageType: "paddle", paddle: "left"}));
-        }
-      } else if (data.clientType==='board') {
-      }
+    if (data.messageType==='coords') {
+      updateCoords(data);
+    } else if (data.messageType==='register') {
+      client = registerClient(ws, data);
     }
-    sendGame(ws, 10);
+    sendGame(ws, 100);
   });
 
   ws.on('close', function() {
-    clearInterval(clientBroadcastInterval)
-    console.log('stopping client interval');
+    if (client) {
+      unregisterClient(client);
+    }
   });
 });
 
