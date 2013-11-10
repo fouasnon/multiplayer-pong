@@ -5,10 +5,9 @@
   .score.right {{game.team.right.score}}
   .board
     .ball-container
-
       .ball(ball="true", init-x="initX", init-y="initY", score="score")
-      .paddle.left(position="leftPosition", move-paddle="true")
-      .paddle.right(position="rightPosition", move-paddle="true")
+      .paddle.left(position="leftPosition", move-paddle="true", ng-class="paddleGlow")
+      .paddle.right(position="rightPosition", move-paddle="true", ng-class="paddleGlow")
   .stats
     p Left Team:
       span {{game.team.left.players}} players
