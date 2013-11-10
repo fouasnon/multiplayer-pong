@@ -36,10 +36,10 @@ body {
 }
 
 .board-container img {
-  width:320px;
+  width:280px;
   position:absolute;
-  top:62px;
-  margin-left:-160px;
+  top:66px;
+  margin-left:-140px;
   left:50%;
 }
 
