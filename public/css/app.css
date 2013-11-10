@@ -37,7 +37,7 @@ body {
   text-align:center;
   display:inline;
   font-size:24px;
-  margin:24px;
+  margin:0px 36px;
 }
 
 .stats span {
@@ -75,17 +75,17 @@ body {
 }
 
 .paddle.left {
-  left:0px;
+  left:-40px;
   top:240px;
-  border-top-right-radius:8px;
-  border-bottom-right-radius:8px;
+  border-top-right-radius:4px;
+  border-bottom-right-radius:4px;
 }
 
 .paddle.right {
-  right:0px;
+  right:-140px;
   top:200px;
-  border-top-left-radius:8px;
-  border-bottom-left-radius:8px;
+  border-top-left-radius:4px;
+  border-bottom-left-radius:4px;
 }
 
 .score {
@@ -282,9 +282,9 @@ body {
 .ball-container {
   position:absolute;
   top:0px;
-  bottom:0px;
+  bottom:100px;
   left:40px;
-  right:40px;
+  right:140px;
 }
 
 .ball {
@@ -305,12 +305,10 @@ body {
 }
 
 .ball.going-right {
-  margin-left:-100px;
   left:100%;
 }
 
 .ball.going-down {
-  margin-top:-100px;
   top:100%;
 }
 
