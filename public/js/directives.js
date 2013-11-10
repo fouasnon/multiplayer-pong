@@ -21,4 +21,18 @@ angular.module('multiplayerPong.directives', []).
         });
       }
     };
+  }).
+directive('moveGutterBall', function (version) {
+    return {
+      restrict: 'A',
+      scope: {
+        position: '='
+      },
+      link: function(scope, elm, attrs) {
+        scope.$watch('position', function(newVal){
+          elm.css('top', newVal*100+'%');
+          elm.css('margin-top', -100*newVal+'px');
+        });
+      }
+    };
   });

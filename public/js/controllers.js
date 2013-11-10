@@ -42,12 +42,13 @@ angular.module('multiplayerPong.controllers', []).
     $window.addEventListener("deviceorientation", function(event) {
       $scope.$apply(function(){
         // process event.alpha, event.beta and event.gamma
-        $scope.x = event.beta;  // In degree in the range [-180,180]
+        $scope.x = event.beta;  // In degree in the range [-90,90]
         $scope.y = event.gamma; // In degree in the range [-90,90]
         $scope.z = event.alpha; // In degree in the range [-90,90]
         if (Math.random() > .5) {
           sendCoords(event.beta);
         }
+        $scope.gutterBallPosition = (90-Math.abs(event.beta))/90;
 
 
         // $scope.xCoords.push(event.beta);
