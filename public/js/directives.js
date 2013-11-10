@@ -36,11 +36,14 @@ angular.module('multiplayerPong.directives', []).
           console.log('x: '+newVal);
 //          elm.css('left', newVal*100+'%');
         });
+        scope.$watch('interval', function(newVal){
+          console.log('interval: '+newVal);
+          elm.css('-webkit-transition', newVal+'ms linear');
+        });
         scope.$watch('vx', function(newVal){
           console.log('vx: '+newVal);
-          console.log(scope.interval);
-          elm.css('-webkit-transition', scope.interval+'ms linear');
-          if (newVal < 0) {
+
+          if (newVal > 0) {
             elm.addClass('going-right');
           } else {
             elm.removeClass('going-right');

@@ -80,31 +80,35 @@ angular.module('multiplayerPong.controllers', []).
     };
 
     ws.onmessage = function(data, flags) {
-      data = JSON.parse(data.data);
-      if (data.messageType==='game') {
-        $scope.$apply(function(){
+      $scope.$apply(function(){
+        data = JSON.parse(data.data);
+        if (data.messageType==='game') {
+          console.log('game');
           $scope.game = data.game;
+//          $scope.score = data.game;
           $scope.leftPosition = data.game.left.y;
           $scope.rightPosition = data.game.right.y;
-        });
-      }
-      else if (data.messageType==='goal') {
-        $scope.$apply(function(){
+        }
+        else if (data.messageType==='goal') {
+          console.log('goal');
           $scope.message = data.paddle + ' Score!'
           $scope.score = data.game;
-        });
-      }
-      else if (data.messageType==='safe') {
-        $scope.$apply(function(){
+          $scope.game = data.game;
+        }
+        else if (data.messageType==='safe') {
+          console.log('safe');
           $scope.message = data.paddle + ' Safe!'
           $scope.score = data.game;
-        });
-      }
-      else if (data.messageType==='start') {
-        $scope.$apply(function(){
-          $scope.game = data;
-          $scope.score = data;
-        });
-      }
+          $scope.game = data.game;
+        }
+        else if (data.messageType==='start') {
+          console.log('start');
+          console.log(data);
+          $scope.message = 'Start';
+          $scope.game = data.game;
+          $scope.score = data.game;
+        }
+
+      });
     };
   });
