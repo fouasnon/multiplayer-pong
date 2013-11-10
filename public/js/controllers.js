@@ -54,14 +54,6 @@ angular.module('multiplayerPong.controllers', []).
           sendCoords(event.beta);
         }
         $scope.gutterBallPosition = (90-Math.abs(event.beta))/90;
-
-
-        // $scope.xCoords.push(event.beta);
-        // if ($scope.xCoords.length > 10) {
-        //   var sortedXCoords = $scope.xCoords.sort();
-        //   $scope.medianXCoord = sortedXCoords[sortedXCoords.length/2];
-        //   $scope.xCoords = [];
-        // }
       });
 
     }, true);
